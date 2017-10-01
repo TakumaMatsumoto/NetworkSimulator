@@ -20,30 +20,30 @@ namespace geo{
 	template<typename T>
 	class Rectangle{
 	public:
-		Point<T> bottom_left;
+		Point<T> left_bottom;
 		T width, height;
-		Rectangle(const Point<T>& bottom_left, const T width, const T height) :
-			bottom_left(bottom_left), width(width), height(height){
+		Rectangle(const Point<T>& left_bottom, const T width, const T height) :
+			left_bottom(left_bottom), width(width), height(height){
 
 		}
 		Point<T> getCenter() const{
-			return Point<T>((bottom_left.x + width) / 2, (bottom_left.y + height) / 2);
+			return Point<T>((left_bottom.x + width) / 2, (left_bottom.y + height) / 2);
 		}
 		T getLeft() const{
-			return bottom_left.x;
+			return left_bottom.x;
 		}
 		T getRight() const{
-			return bottom_left.x + width;
+			return left_bottom.x + width;
 		}
 		T getButtom() const{
-			return bottom_left.y;
+			return left_bottom.y;
 		}
 		T getTop() const{
-			return bottom_left.y + height;
+			return left_bottom.y + height;
 		}
 		bool include(const Point<T>& point){
-			bool inX = (bottom_left.x <= point.x) && (point.x <= bottom_left.x + width);
-			bool inY = (bottom_left.y <= point.y) && (point.y <= bottom_left.y + height);
+			bool inX = (left_bottom.x <= point.x) && (point.x <= left_bottom.x + width);
+			bool inY = (left_bottom.y <= point.y) && (point.y <= left_bottom.y + height);
 			return inX && inY;
 		}
 	};
