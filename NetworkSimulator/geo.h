@@ -1,65 +1,62 @@
 #pragma once
+#include <math.h>
 
 namespace geo{
+	template<typename T>
 	class Point{
 	public:
 		virtual ~Point() = default;
-		Point(const int x, const int y) : x(x), y(y){
+		Point(const T x, const T y) : x(x), y(y){
 
 		}
 		Point() : x(0), y(0){
 		}
-		int x, y;
-		double distanceTo(const Point& target) const{
+		T x, y;
+		double distanceTo(const Point<T>& target) const{
 			return sqrt(pow(x - target.x, 2.0) + pow(y - target.y, 2.0));
 		}
 	};
 
+	template<typename T>
 	class Rectangle{
 	public:
-		virtual ~Rectangle() = default;
-		Point bottom_left;
-		int width, height;
-		Rectangle(const Point& bottom_left, const int width, const int height) :
+		Point<T> bottom_left;
+		T width, height;
+		Rectangle(const Point<T>& bottom_left, const T width, const T height) :
 			bottom_left(bottom_left), width(width), height(height){
 
 		}
-		Rectangle() : width(0), height(0){
-
+		Point<T> getCenter() const{
+			return Point<T>((bottom_left.x + width) / 2, (bottom_left.y + height) / 2);
 		}
-		Point getCenter() const{
-			return Point((bottom_left.x + width) / 2, (bottom_left.y + height) / 2);
-		}
-		int getLeft() const{
+		T getLeft() const{
 			return bottom_left.x;
 		}
-		int getRight() const{
+		T getRight() const{
 			return bottom_left.x + width;
 		}
-		int getButtom() const{
+		T getButtom() const{
 			return bottom_left.y;
 		}
-		int getTop() const{
+		T getTop() const{
 			return bottom_left.y + height;
 		}
-		bool include(const Point& point){
+		bool include(const Point<T>& point){
 			bool inX = (bottom_left.x <= point.x) && (point.x <= bottom_left.x + width);
 			bool inY = (bottom_left.y <= point.y) && (point.y <= bottom_left.y + height);
 			return inX && inY;
 		}
 	};
 
+	template<typename T>
 	class Circle{
 	public:
-		Point center;
-		int range;
-		Circle(const Point& center, int range) : center(center), range(range){
+		Point<T> center;
+		T range;
+		Circle(const Point<T>& center, T range) : center(center), range(range){
 
 		}
-		Circle() : range(0){
-
-		}
-		bool include(const Point& point){
+		bool include(const Point<T>& point){
 			return center.distanceTo(point) <= range;
 		}
 	};

@@ -1,8 +1,9 @@
-#include <wx/wx.h>
-#include <wx/sizer.h>
-#include <memory>
-#include <string>
-#include <unordered_map>
+#pragma once
 #include <vector>
-#include <numeric>
+#include <string>
+#include <memory>
+#include <unordered_map>
 #include <functional>
+#include <numeric>
+#include "geo.h"
+#include "Table.h"
