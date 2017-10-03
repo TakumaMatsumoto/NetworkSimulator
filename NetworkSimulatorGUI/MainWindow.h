@@ -7,10 +7,7 @@ private:
 	void onNewProject(wxCommandEvent& event);
 	void onExportResults(wxCommandEvent& event);
 	void onExit(wxCommandEvent& event);
-	void onOpen(wxCommandEvent& event);
-	void onSave(wxCommandEvent& event);
-	void onSaveAs(wxCommandEvent& event);
-	void onEdit(wxCommandEvent& event);
+	void onOpenSettingWindow(wxCommandEvent& event);
 	void onExecuteWithGraphicUpdate(wxCommandEvent& event);
 	void onExecuteWithoutGraphicUpdate(wxCommandEvent& event);
 	void onStop(wxCommandEvent& event);
@@ -25,14 +22,6 @@ private:
 		MainWindow* mp_window;
 	public:
 		FileMenu(MainWindow* p_window) : mp_window(p_window){
-
-		}
-		wxMenu* create() override;
-	};
-	class SettingMenu : public IMenu{
-		MainWindow* mp_window;
-	public:
-		SettingMenu(MainWindow* p_window) : mp_window(p_window){
 
 		}
 		wxMenu* create() override;

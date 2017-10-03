@@ -7,8 +7,7 @@ MainWindow::MainWindow()
 
 	wxMenuBar* menuBar = new wxMenuBar;
 	menuBar->Append(FileMenu(this).create(),	 "&ファイル");
-	menuBar->Append(SettingMenu(this).create(),	 "&設定");
-	menuBar->Append(ExecuteMenu(this).create(),  "&実行");
+	menuBar->Append(ExecuteMenu(this).create(),  "&シミュレーション");
 	menuBar->Append(HelpMenu(this).create(),	 "&ヘルプ");
 	SetBackgroundColour(wxColor(255, 255, 255));
 	SetMenuBar(menuBar);
@@ -28,19 +27,7 @@ void MainWindow::onExit(wxCommandEvent& event){
 	Close(true);
 }
 
-void MainWindow::onOpen(wxCommandEvent& event){
-
-}
-
-void MainWindow::onSave(wxCommandEvent& event){
-
-}
-
-void MainWindow::onSaveAs(wxCommandEvent& event){
-
-}
-
-void MainWindow::onEdit(wxCommandEvent& event){
+void MainWindow::onOpenSettingWindow(wxCommandEvent& event){
 
 }
 
