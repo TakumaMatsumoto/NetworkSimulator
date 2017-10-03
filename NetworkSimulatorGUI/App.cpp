@@ -1,10 +1,10 @@
 #include "App.h"
-#include "Window.h"
+#include "MainWindow.h"
 #include "Canvas.h"
 
 bool App::OnInit()
 {
-	mp_frame = new Window();
+	mp_frame = new MainWindow();
 	mp_slider = new wxSlider(mp_frame, 1, 0, 0, 1, wxPoint(0, 0), wxSize(500, -1));
 	mp_time_label = new wxStaticText(mp_frame, 1, "Time:", wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT);
 	mp_time_label->SetFont(wxFont(20, wxFontFamily::wxFONTFAMILY_ROMAN, wxNORMAL, wxNORMAL));
