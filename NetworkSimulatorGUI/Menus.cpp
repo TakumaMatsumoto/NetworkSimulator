@@ -14,20 +14,20 @@ enum{
 	ID_ABOUT = 11,
 };
 
-wxMenu* Window::createFileMenu(){
+wxMenu* Window::FileMenu::create(){
 	wxMenu* ret = new wxMenu;
 	ret->Append(ID_NEW, "&新しいプロジェクト\tCtrl+N");
 	ret->AppendSeparator();
 	ret->Append(ID_EXPORT, "&結果をエクスポート\tCtrl+E");
 	ret->AppendSeparator();
 	ret->Append(ID_EXIT, "&終了\tAlt+F4");
-	Bind(wxEVT_MENU, &Window::OnNewProject, this, ID_NEW);
-	Bind(wxEVT_MENU, &Window::OnExport,		this, ID_EXPORT);
-	Bind(wxEVT_MENU, &Window::OnExit,		this, ID_EXIT);
+	mp_window->Bind(wxEVT_MENU, &Window::onNewProject,	mp_window, ID_NEW);
+	mp_window->Bind(wxEVT_MENU, &Window::onExport,		mp_window, ID_EXPORT);
+	mp_window->Bind(wxEVT_MENU, &Window::onExit,		mp_window, ID_EXIT);
 	return ret;
 }
 
-wxMenu* Window::createSettingMenu(){
+wxMenu* Window::SettingMenu::create(){
 	wxMenu* ret = new wxMenu;
 	ret->Append(ID_OPEN, "&ファイルを開く\tCtrl+O");
 	ret->AppendSeparator();
@@ -35,13 +35,13 @@ wxMenu* Window::createSettingMenu(){
 	ret->Append(ID_SAVE_AS, "&名前を付けて保存\tCtrl+Shift+S");
 	ret->AppendSeparator();
 	ret->Append(ID_EDIT, "&設定ウィンドウを開く\tCtrl+T");
-	Bind(wxEVT_MENU, &Window::OnOpen,	this, ID_OPEN);
-	Bind(wxEVT_MENU, &Window::OnSave,	this, ID_SAVE);
-	Bind(wxEVT_MENU, &Window::OnSaveAs, this, ID_SAVE_AS);
+	mp_window->Bind(wxEVT_MENU, &Window::onOpen, mp_window, ID_OPEN);
+	mp_window->Bind(wxEVT_MENU, &Window::onSave, mp_window, ID_SAVE);
+	mp_window->Bind(wxEVT_MENU, &Window::onSaveAs, mp_window, ID_SAVE_AS);
 	return ret;
 }
 
-wxMenu* Window::createExecuteMenu(){
+wxMenu* Window::ExecuteMenu::create(){
 	wxMenu* ret = new wxMenu;
 	mp_execute_with_graphic_update_menu_item = new wxMenuItem(NULL, ID_EXECUTE_WITH_GRAPHIC_UPDATE, "&リアルタイム表示ありで実行\tF7");
 	mp_execute_without_graphic_update_menu_item = new wxMenuItem(NULL, ID_EXECUTE_WITHOUT_GRAPHIC_UPDATE, "&リアルタイム表示なしで実行\tF8");
@@ -51,60 +51,15 @@ wxMenu* Window::createExecuteMenu(){
 	ret->Append(mp_execute_with_graphic_update_menu_item);
 	ret->Append(mp_execute_without_graphic_update_menu_item);
 	ret->Append(mp_stop_menu_item);
-	Bind(wxEVT_MENU, &Window::OnExecuteWithGraphicUpdate,	 this, ID_EXECUTE_WITH_GRAPHIC_UPDATE);
-	Bind(wxEVT_MENU, &Window::OnExecuteWithoutGraphicUpdate, this, ID_EXECUTE_WITHOUT_GRAPHIC_UPDATE);
-	Bind(wxEVT_MENU, &Window::OnStop,						 this, ID_STOP);
+	mp_window->Bind(wxEVT_MENU, &Window::onExecuteWithGraphicUpdate,	mp_window, ID_EXECUTE_WITH_GRAPHIC_UPDATE);
+	mp_window->Bind(wxEVT_MENU, &Window::onExecuteWithoutGraphicUpdate, mp_window, ID_EXECUTE_WITHOUT_GRAPHIC_UPDATE);
+	mp_window->Bind(wxEVT_MENU, &Window::onStop,						mp_window, ID_STOP);
 	return ret;
 }
 
-wxMenu* Window::createHelpMenu(){
+wxMenu* Window::HelpMenu::create(){
 	wxMenu* ret = new wxMenu;
 	ret->Append(ID_ABOUT, "&バージョン情報\tCtrl+Q");
-	Bind(wxEVT_MENU, &Window::OnAbout, this, ID_ABOUT);
+	mp_window->Bind(wxEVT_MENU, &Window::onAbout, mp_window, ID_ABOUT);
 	return ret;
-}
-
-void Window::OnNewProject(wxCommandEvent& event){
-
-}
-
-void Window::OnExport(wxCommandEvent& event){
-
-}
-
-void Window::OnExit(wxCommandEvent& event){
-	Close(true);
-}
-
-void Window::OnOpen(wxCommandEvent& event){
-
-}
-
-void Window::OnSave(wxCommandEvent& event){
-
-}
-
-void Window::OnSaveAs(wxCommandEvent& event){
-
-}
-
-void Window::OnEdit(wxCommandEvent& event){
-
-}
-
-void Window::OnExecuteWithoutGraphicUpdate(wxCommandEvent& event){
-
-}
-
-void Window::OnExecuteWithGraphicUpdate(wxCommandEvent& event){
-
-}
-
-void Window::OnStop(wxCommandEvent& event){
-
-}
-
-void Window::OnAbout(wxCommandEvent& event){
-	wxMessageBox("NetworkSimulator ver 0.1",
-		"NetworkSimulatorのバージョン情報", wxOK | wxICON_INFORMATION);
 }
