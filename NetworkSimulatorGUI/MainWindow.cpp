@@ -1,4 +1,5 @@
 #include "MainWindow.h"
+#include "SettingWindow.h"
 
 MainWindow::MainWindow()
 	: wxFrame(NULL, wxID_ANY, "NetworkSimulator", wxDefaultPosition, wxSize(800, 600), wxDEFAULT_FRAME_STYLE & ~(wxRESIZE_BORDER | wxMAXIMIZE_BOX))
@@ -28,7 +29,8 @@ void MainWindow::onExit(wxCommandEvent& event){
 }
 
 void MainWindow::onOpenSettingWindow(wxCommandEvent& event){
-
+	SettingWindow diag(this, -1, "ê›íË", wxDefaultPosition, wxDefaultSize);
+	diag.ShowModal();
 }
 
 void MainWindow::onExecuteWithoutGraphicUpdate(wxCommandEvent& event){
