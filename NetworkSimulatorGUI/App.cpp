@@ -2,7 +2,7 @@
 #include "Window.h"
 #include "Canvas.h"
 
-bool MyApp::OnInit()
+bool App::OnInit()
 {
 	mp_frame = new Window();
 	mp_slider = new wxSlider(mp_frame, 1, 0, 0, 1, wxPoint(0, 0), wxSize(500, -1));

@@ -1,6 +1,6 @@
 #pragma once
 
-class MyApp : public wxApp
+class App : public wxApp
 {
 	bool OnInit();
 	wxFrame* mp_frame;

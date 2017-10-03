@@ -1,3 +1,3 @@
 #include "App.h"
 
-IMPLEMENT_APP(MyApp)
+IMPLEMENT_APP(App)
