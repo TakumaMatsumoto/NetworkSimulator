@@ -15,6 +15,8 @@ private:
 	void onStop(wxCommandEvent& event);
 	void onAbout(wxCommandEvent& event);
 	// Commands end
+	// SliderEvent
+	void onScroll(wxScrollEvent& event);
 	class FileMenu : public wxMenu{
 	public:
 		FileMenu(MainWindow* p_parent);
