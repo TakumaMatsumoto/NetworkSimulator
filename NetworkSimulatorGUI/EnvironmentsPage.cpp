@@ -62,18 +62,18 @@ EnvironmentsPage::EnvironmentsPage(wxNotebook* p_parent) : wxPanel(p_parent, wxI
 }
 
 void EnvironmentsPage::onAddItem(wxCommandEvent& event){
-	const int index = mp_list_ctrl->GetItemCount();
-	mp_list_ctrl->InsertItem(index, wxString("0"));
 	const ns::Config def = ns::Config();
-	mp_list_ctrl->SetItem(index, static_cast<long>(Columns::FIELD_WIDTH),			std::to_string(def.m_area.getWidth()));
-	mp_list_ctrl->SetItem(index, static_cast<long>(Columns::FIELD_HEIGHT),			std::to_string(def.m_area.getHeight()));
-	mp_list_ctrl->SetItem(index, static_cast<long>(Columns::SIMULATION_PERIOD),		std::to_string(def.m_simulation_period));
-	mp_list_ctrl->SetItem(index, static_cast<long>(Columns::TRANSMISSION_SPEED),	std::to_string(def.m_transmission_speed));
-	mp_list_ctrl->SetItem(index, static_cast<long>(Columns::TRANSMISSION_RANGE),	std::to_string(def.m_transmission_range));
-	mp_list_ctrl->SetItem(index, static_cast<long>(Columns::MESSAGE_SIZE),			std::to_string(def.m_message_size));
-	mp_list_ctrl->SetItem(index, static_cast<long>(Columns::MESSAGE_INTERVAL),		std::to_string(def.m_message_interval));
-	mp_list_ctrl->SetItem(index, static_cast<long>(Columns::NUMBER_OF_RELAY_NODES), std::to_string(def.m_number_of_relay_nodes));
-	mp_list_ctrl->SetItem(index, static_cast<long>(Columns::ROUTING_PROTOCOL),		to_string(def.m_routing_protocol));
+	wxVector<wxVariant> data;
+	data.push_back(wxVariant(std::to_string(def.m_area.getWidth())));
+	data.push_back(wxVariant(std::to_string(def.m_area.getHeight())));
+	data.push_back(wxVariant(std::to_string(def.m_simulation_period)));
+	data.push_back(wxVariant(std::to_string(def.m_transmission_speed)));
+	data.push_back(wxVariant(std::to_string(def.m_transmission_range)));
+	data.push_back(wxVariant(std::to_string(def.m_message_size)));
+	data.push_back(wxVariant(std::to_string(def.m_message_interval)));
+	data.push_back(wxVariant(std::to_string(def.m_number_of_relay_nodes)));
+	data.push_back(wxVariant(to_string(def.m_routing_protocol)));
+	mp_list_ctrl->AppendItem(data);
 }
 
 void EnvironmentsPage::onDeleteItem(wxCommandEvent & event){
@@ -89,22 +89,14 @@ void EnvironmentsPage::onSaveItems(wxCommandEvent & event){
 }
 
 EnvironmentsPage::EnvironmentsList::EnvironmentsList(wxWindow* p_parent) :
-wxListCtrl(p_parent, wxID_ANY, wxDefaultPosition, p_parent->GetSize(), wxLC_REPORT | wxLC_VIRTUAL){
-	InsertColumn(static_cast<long>(Columns::FIELD_WIDTH),			wxT("フィールド横幅(m)"));
-	InsertColumn(static_cast<long>(Columns::FIELD_HEIGHT),			wxT("フィールド縦幅(m)"));
-	InsertColumn(static_cast<long>(Columns::SIMULATION_PERIOD),		wxT("シミュレーション時間(s)"));
-	InsertColumn(static_cast<long>(Columns::TRANSMISSION_SPEED),	wxT("通信速度(bps)"));
-	InsertColumn(static_cast<long>(Columns::TRANSMISSION_RANGE),	wxT("通信可能範囲(m)"));
-	InsertColumn(static_cast<long>(Columns::MESSAGE_SIZE),			wxT("メッセージ長(bit)"));
-	InsertColumn(static_cast<long>(Columns::MESSAGE_INTERVAL),		wxT("メッセージ間隔(s)"));
-	InsertColumn(static_cast<long>(Columns::NUMBER_OF_RELAY_NODES), wxT("リレーノード数"));
-	InsertColumn(static_cast<long>(Columns::ROUTING_PROTOCOL),		wxT("ルーティングプロトコル"));
-	for (int i = 0; i < GetColumnCount(); i++)
-	{
-		SetColumnWidth(i, wxLIST_AUTOSIZE_USEHEADER);
-	}
-}
-
-wxString EnvironmentsPage::EnvironmentsList::OnGetItemText(long item, long column) const{
-	return GetItemText(item, column);
+wxDataViewListCtrl(p_parent, wxID_ANY){
+	AppendTextColumn(wxT("フィールド横幅(m)"),		 wxDATAVIEW_CELL_EDITABLE);
+	AppendTextColumn(wxT("フィールド縦幅(m)"),		 wxDATAVIEW_CELL_EDITABLE);
+	AppendTextColumn(wxT("シミュレーション時間(s)"), wxDATAVIEW_CELL_EDITABLE);
+	AppendTextColumn(wxT("通信速度(bps)"),			 wxDATAVIEW_CELL_EDITABLE);
+	AppendTextColumn(wxT("通信可能範囲(m)"),		 wxDATAVIEW_CELL_EDITABLE);
+	AppendTextColumn(wxT("メッセージ長(bit)"),		 wxDATAVIEW_CELL_EDITABLE);
+	AppendTextColumn(wxT("メッセージ間隔(s)"),		 wxDATAVIEW_CELL_EDITABLE);
+	AppendTextColumn(wxT("リレーノード数"),			 wxDATAVIEW_CELL_EDITABLE);
+	AppendTextColumn(wxT("ルーティングプロトコル"),  wxDATAVIEW_CELL_EDITABLE);
 }

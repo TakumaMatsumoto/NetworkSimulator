@@ -1,12 +1,11 @@
 #pragma once
 
 class EnvironmentsPage : public wxPanel{
-	class EnvironmentsList : public wxListCtrl{
+	class EnvironmentsList : public wxDataViewListCtrl{
 	public:
 		EnvironmentsList(wxWindow* p_parent);
-		wxString OnGetItemText(long item, long column) const;
 	};
-	wxListCtrl* mp_list_ctrl;
+	wxDataViewListCtrl* mp_list_ctrl;
 	wxButton* mp_add_item_button;
 	wxButton* mp_delete_item_button;
 	wxButton* mp_load_items_button;

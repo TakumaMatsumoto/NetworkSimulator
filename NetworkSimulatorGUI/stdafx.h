@@ -3,6 +3,7 @@
 #include <wx/sizer.h>
 #include <wx/notebook.h>
 #include <wx/listctrl.h>
+#include <wx/dataview.h>
 #include <memory>
 #include <string>
 #include <unordered_map>
