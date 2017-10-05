@@ -33,7 +33,6 @@ MainWindow::MainWindow()
 		bottomSizer->Add(p_window->mp_slider, 1, wxEXPAND);
 		return bottomSizer;
 	}(this));
-	SetSizer(topSizer);
 	// メニューに関する初期化
 	SetMenuBar([](MainWindow* p_window){
 		wxMenuBar* menuBar = new wxMenuBar;
@@ -45,6 +44,7 @@ MainWindow::MainWindow()
 	}(this));
 
 	// ウィンドウ自体の設定
+	SetSizer(topSizer);
 	Centre();
 	SetBackgroundColour(wxColor(255, 255, 255));
 	CreateStatusBar();
