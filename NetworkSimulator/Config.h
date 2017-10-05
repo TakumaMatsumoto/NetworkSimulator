@@ -1,14 +1,14 @@
 #pragma once
 #include "Area.h"
+#include "Table.h"
 #include "Shelter.h"
 #include "Sufferer.h"
 #include "RelayNode.h"
 
 namespace ns{
 	class Config{
-	private:
-		Config() : m_area(geo::Rectangle<double>(geo::Point<double>(0.0, 0.0), 0.0, 0.0)){}
 	public:
+		Config() : m_area(geo::Rectangle<double>(geo::Point<double>(0.0, 0.0), 0.0, 0.0)){}
 		enum class RoutingProtocol{
 			EPIDEMIC_ROUTING = 1,
 			SPRAY_AND_WAIT = 2
@@ -31,13 +31,12 @@ namespace ns{
 		int m_number_of_relay_nodes;
 		// ルーティングプロトコル
 		RoutingProtocol m_routing_protocol;
-
 		static Config createFromTable(const table::Table& tbl, const table::LineHeader& lhead);
 	};
 	class Configs{
 		std::vector<Config> m_configs;
-		Configs(const std::vector<Config>& configs) : m_configs(configs){}
 	public:
+		Configs(const std::vector<Config>& configs) : m_configs(configs){}
 		void add(const Config& conf){
 			m_configs.push_back(conf);
 		}
