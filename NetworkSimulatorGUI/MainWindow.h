@@ -3,6 +3,8 @@
 class MainWindow : public wxFrame
 {
 private:
+	wxSlider* mp_slider;
+	wxStaticText* mp_time_label;
 	// Commands begin
 	void onNewProject(wxCommandEvent& event);
 	void onExportResults(wxCommandEvent& event);
@@ -13,37 +15,21 @@ private:
 	void onStop(wxCommandEvent& event);
 	void onAbout(wxCommandEvent& event);
 	// Commands end
-	class IMenu{
+	class FileMenu : public wxMenu{
 	public:
-		virtual ~IMenu() = default;
-		virtual wxMenu* create() = 0;
+		FileMenu(MainWindow* p_parent);
 	};
-	class FileMenu : public IMenu{
-		MainWindow* mp_window;
-	public:
-		FileMenu(MainWindow* p_window) : mp_window(p_window){
-
-		}
-		wxMenu* create() override;
-	};
-	class ExecuteMenu : public IMenu{
+	class ExecuteMenu : public wxMenu{
 		wxMenuItem* mp_execute_with_graphic_update_menu_item;
 		wxMenuItem* mp_execute_without_graphic_update_menu_item;
 		wxMenuItem* mp_stop_menu_item;
 		MainWindow* mp_window;
 	public:
-		ExecuteMenu(MainWindow* p_window) : mp_window(p_window){
-
-		}
-		wxMenu* create() override;
+		ExecuteMenu(MainWindow* p_parent);
 	};
-	class HelpMenu : public IMenu{
-		MainWindow* mp_window;
+	class HelpMenu : public wxMenu{
 	public:
-		HelpMenu(MainWindow* p_window) : mp_window(p_window){
-
-		}
-		wxMenu* create() override;
+		HelpMenu(MainWindow* p_parent);
 	};
 public:
 	MainWindow();
