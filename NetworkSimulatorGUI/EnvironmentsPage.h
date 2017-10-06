@@ -2,6 +2,8 @@
 
 class EnvironmentsPage : public wxPanel{
 	class EnvironmentsList : public wxDataViewListCtrl{
+		void onSelectionChanged(wxDataViewEvent& event);
+		void onEditingDone(wxDataViewEvent& event);
 	public:
 		EnvironmentsList(wxWindow* p_parent);
 	};
