@@ -1,5 +1,6 @@
 #include "SufferersPage.h"
 #include "Config.h"
+
 enum class Command{
 	ADD_ITEM = 0,
 	DELETE_ITEM,

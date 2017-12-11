@@ -6,9 +6,9 @@
 #include "RelayNode.h"
 
 namespace ns{
-	class Config{
+	class DTNConfig{
 	public:
-		Config(){
+		DTNConfig(){
 		}
 		enum class RoutingProtocol{
 			EPIDEMIC_ROUTING = 1,
@@ -34,18 +34,6 @@ namespace ns{
 		int m_number_of_relay_nodes = 0;
 		// ルーティングプロトコル
 		RoutingProtocol m_routing_protocol = RoutingProtocol::EPIDEMIC_ROUTING;
-		static Config createFromTable(const table::Table& tbl, const table::LineHeader& lhead);
-	};
-	class Configs{
-		std::vector<Config> m_configs;
-	public:
-		Configs(const std::vector<Config>& configs) : m_configs(configs){}
-		void add(const Config& conf){
-			m_configs.push_back(conf);
-		}
-		std::vector<Config> get() const{
-			return m_configs;
-		}
-		static Configs createFromTable(const table::Table& tbl);
+		static DTNConfig createFromTable(const table::Table& tbl, const table::LineHeader& lhead);
 	};
 }
