@@ -10,6 +10,9 @@ namespace sim
 		Config m_conf;
 		table::Table m_param_table;
 	public:
+		//
+		// @param conf:シミュレーター全体に関わる設定
+		// @param param_table:シミュレーターで行うパラメータを一覧にしたテーブルオブジェクト
 		Simulator(const Config& conf, const table::Table& param_table) : m_conf(conf), m_param_table(param_table) {
 
 		}
