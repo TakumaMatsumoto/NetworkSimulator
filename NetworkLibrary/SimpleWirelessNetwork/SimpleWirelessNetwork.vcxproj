@@ -141,6 +141,7 @@
   <ItemGroup>
     <ClCompile Include="DLLFunctions.cpp" />
     <ClCompile Include="Simulator.cpp" />
+    <ClCompile Include="SWNConfig.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Source.def" />
