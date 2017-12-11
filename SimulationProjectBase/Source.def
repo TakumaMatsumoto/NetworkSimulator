@@ -1,0 +1,3 @@
+LIBRARY Sample
+EXPORTS
+	CreateSimulatorInstance @1
