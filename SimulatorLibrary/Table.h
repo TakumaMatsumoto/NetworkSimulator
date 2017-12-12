@@ -60,6 +60,17 @@ namespace table {
 		std::vector<ColumnHeader> getColumnHeaders() const {
 			return m_column_headers;
 		}
+		// row_headで指定した行を取得します
+		// key:   カラム名
+		// value: 値
+		std::unordered_map<std::string, std::string> getRow(const std::string& row_head) const {
+			std::unordered_map<std::string, std::string> ret;
+			for (const auto& column_head : getColumnHeaders())
+			{
+				ret.insert(std::make_pair(column_head, this->cell(Index(row_head, column_head)).m_value));
+			}
+			return ret;
+		}
 		void insert(const Index& index, const Cell& cell) {
 			// 高速化のために行・列のヘッダを保存
 			insertRowHeader(index.first);
@@ -71,6 +82,7 @@ namespace table {
 			}
 			m_data.insert(std::make_pair(index, cell));
 		}
+		// indexに保存されているセルを取得します
 		inline Cell cell(const Index& index) const {
 			return m_data.at(index);
 		}
