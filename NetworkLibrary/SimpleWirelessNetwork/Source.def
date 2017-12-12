@@ -1,3 +1,3 @@
 LIBRARY SWN
 EXPORTS
-	CreateSimulatorInstance @1
+	CreateSimulationInstance @1
