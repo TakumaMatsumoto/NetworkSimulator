@@ -1,11 +1,11 @@
 #pragma once
-#include "IMappable.h"
+#include <unordered_map>
 
 namespace sim
 {
-	class IRunnable : public IMappable {
+	class IRunnable {
 	public:
 		virtual ~IRunnable() = default;
-		virtual void run() = 0;
+		virtual std::unordered_map<std::string, std::string> run() = 0;
 	};
 }
