@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26430.6
+VisualStudioVersion = 15.0.27130.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CUIApplication", "CUIApplication\CUIApplication.vcxproj", "{A4E53A60-7211-45A2-B761-AE37CCAF1ABA}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -22,6 +22,10 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SimulationProjectBase", "Si
 	ProjectSection(ProjectDependencies) = postProject
 		{78533D26-9B31-4448-942F-5397FA57C8D1} = {78533D26-9B31-4448-942F-5397FA57C8D1}
 	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ResultViewer", "ResultViewer", "{680A4713-3198-4969-8325-0A359569DA3F}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ConsoleViewer", "ResultViewer\ConsoleViewer\ConsoleViewer.vcxproj", "{0C1993CB-DF4A-4A92-A03C-0C0D0F3E2D23}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -79,6 +83,14 @@ Global
 		{55D7BD42-867E-4938-9C00-F610BD81792E}.Release|Win32.Build.0 = Release|Win32
 		{55D7BD42-867E-4938-9C00-F610BD81792E}.Release|x64.ActiveCfg = Release|x64
 		{55D7BD42-867E-4938-9C00-F610BD81792E}.Release|x64.Build.0 = Release|x64
+		{0C1993CB-DF4A-4A92-A03C-0C0D0F3E2D23}.Debug|Win32.ActiveCfg = Debug|Win32
+		{0C1993CB-DF4A-4A92-A03C-0C0D0F3E2D23}.Debug|Win32.Build.0 = Debug|Win32
+		{0C1993CB-DF4A-4A92-A03C-0C0D0F3E2D23}.Debug|x64.ActiveCfg = Debug|x64
+		{0C1993CB-DF4A-4A92-A03C-0C0D0F3E2D23}.Debug|x64.Build.0 = Debug|x64
+		{0C1993CB-DF4A-4A92-A03C-0C0D0F3E2D23}.Release|Win32.ActiveCfg = Release|Win32
+		{0C1993CB-DF4A-4A92-A03C-0C0D0F3E2D23}.Release|Win32.Build.0 = Release|Win32
+		{0C1993CB-DF4A-4A92-A03C-0C0D0F3E2D23}.Release|x64.ActiveCfg = Release|x64
+		{0C1993CB-DF4A-4A92-A03C-0C0D0F3E2D23}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -86,5 +98,9 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{CBE21DC8-4FB9-4C97-BBFA-71AF55366329} = {D71E65A7-3BCE-4C20-9C12-61CDB46B0F1A}
 		{DE81BDF1-7DFA-4004-A3CB-0D0A121531A2} = {D71E65A7-3BCE-4C20-9C12-61CDB46B0F1A}
+		{0C1993CB-DF4A-4A92-A03C-0C0D0F3E2D23} = {680A4713-3198-4969-8325-0A359569DA3F}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E413ED00-7D7B-478B-90FB-8ADF8342612A}
 	EndGlobalSection
 EndGlobal
