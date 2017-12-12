@@ -23,9 +23,9 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SimulationProjectBase", "Si
 		{78533D26-9B31-4448-942F-5397FA57C8D1} = {78533D26-9B31-4448-942F-5397FA57C8D1}
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ResultViewer", "ResultViewer", "{680A4713-3198-4969-8325-0A359569DA3F}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SimulationViewer", "SimulationViewer", "{680A4713-3198-4969-8325-0A359569DA3F}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ConsoleViewer", "ResultViewer\ConsoleViewer\ConsoleViewer.vcxproj", "{0C1993CB-DF4A-4A92-A03C-0C0D0F3E2D23}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ConsoleViewer", "SimulationViewer\ConsoleViewer\ConsoleViewer.vcxproj", "{0C1993CB-DF4A-4A92-A03C-0C0D0F3E2D23}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
