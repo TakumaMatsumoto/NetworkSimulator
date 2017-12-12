@@ -1,7 +1,7 @@
 #include "DLLFunctions.h"
-#include "Simulator.h"
+#include "Simulation.h"
 using namespace sim::sample;
 
-sim::IRunnable* CreateSimulatorInstance(const table::RowHeader& row_header, const table::Table& tbl) {
-	return new Simulator();
+sim::IRunnable* CreateSimulatorInstance(const std::unordered_map<std::string, std::string>& param_map) {
+	return new Simulation();
 }
