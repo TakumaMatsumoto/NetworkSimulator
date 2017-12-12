@@ -25,10 +25,10 @@ int main(int argc, char* argv[]) {
 		default:
 			cout << "Usage: "
  				 << argv[0]
-				 << "[-c arg]" 
-				 << "[-i arg]"
-				 << "[-r arg]"
-				 << "arg1 ..." << endl;
+				 << " [-c arg]" 
+				 << " [-i arg]"
+				 << " [-r arg]"
+				 << " arg1 ..." << endl;
 			cout << "option:" << endl;
 			cout << "-c: filename of simulation dll" << endl;
 			cout << "-i: filename of csv parameter table" << endl;

@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "getopt.h"
+#include "stdafx.h"
 
 char* optarg = 0;
 int optind = 1;
