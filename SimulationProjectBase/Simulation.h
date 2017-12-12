@@ -3,12 +3,9 @@
 
 namespace sim {
 	namespace sample {
-		class Simulator : public IRunnable {
+		class Simulation : public IRunnable {
 		public:
-			void run() override {
-
-			}
-			std::unordered_map<std::string, std::string> toMap() const override {
+			std::unordered_map<std::string, std::string> run() override {
 				return std::unordered_map<std::string, std::string>();
 			}
 		};
