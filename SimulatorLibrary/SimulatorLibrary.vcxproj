@@ -114,6 +114,8 @@
     <ClInclude Include="Config.h" />
     <ClInclude Include="IMappable.h" />
     <ClInclude Include="IRunnable.h" />
+    <ClInclude Include="ISimulation.h" />
+    <ClInclude Include="IViewer.h" />
     <ClInclude Include="Simulator.h" />
     <ClInclude Include="Table.h" />
   </ItemGroup>
