@@ -3,7 +3,7 @@
 #include <functional>
 #include <algorithm>
 #include "Simulator.h"
-using namespace sim;
+using namespace sim::msw;
 
 void Simulator::Simulation::init() {
 	m_lib_handle = LoadLibraryA(m_dll_filename.c_str());
