@@ -1,3 +1,8 @@
 LIBRARY ConsoleViewer
 EXPORTS
-	OutputResult @1
+	OnSimulatorBegin @1
+	OnSimulationsBegin @2
+	OnSimulationBegin @3
+	OnSimulationEnd @4
+	OnSimulationsEnd @5
+	OnSimulatorEnd @6
