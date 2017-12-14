@@ -8,11 +8,11 @@ using namespace sim::msw;
 void Simulator::Simulation::init() {
 	m_lib_handle = LoadLibraryA(m_dll_filename.c_str());
 	if (m_lib_handle == NULL) {
-		throw std::exception();
+		throw std::exception("DLL file for simulation not found");
 	}
 	m_func = reinterpret_cast<CREATE_SIMULATION_INSTANCE_FUNC>(GetProcAddress(m_lib_handle, "CreateSimulationInstance"));
 	if (m_func == NULL) {
-		throw std::exception();
+		throw std::exception("CreateSimulationInstance function not found");
 	}
 }
 
@@ -23,7 +23,7 @@ void Simulator::Simulation::terminate() {
 void Simulator::Viewer::init() {
 	m_lib_handle = LoadLibraryA(m_dll_filename.c_str());
 	if (m_lib_handle == NULL) {
-		throw std::exception();
+		throw std::exception("DLL file for viewer not found");
 	}
 	m_simulator_begin_func	 = reinterpret_cast<ON_SIMULATOR_BEGIN_FUNC>	(GetProcAddress(m_lib_handle, "OnSimulatorBegin"));
 	m_simulations_begin_func = reinterpret_cast<ON_SIMULATIONS_BEGIN_FUNC>	(GetProcAddress(m_lib_handle, "OnSimulationsBegin"));
@@ -37,7 +37,7 @@ void Simulator::Viewer::init() {
 		m_simulation_end_func	 == NULL ||
 		m_simulations_end_func	 == NULL ||
 		m_simulator_end_func	 == NULL) {
-		throw std::exception();
+		throw std::exception("Any function in viewer dll not found");
 	}
 }
 
@@ -88,7 +88,7 @@ void Simulator::run() {
 		viewers.onSimulatorEnd();
 	}
 	catch(const std::exception& ex){
-		
+		MessageBoxA(NULL, ex.what(), "error", MB_OK | MB_ICONERROR);
 	}
 	sim.terminate();
 	viewers.terminate();
