@@ -4,52 +4,93 @@
 #include <algorithm>
 #include "Simulator.h"
 using namespace sim;
-using CFUNC = sim::IRunnable*(*)(const table::RowHeader& row_header, const table::Table& tbl);
-using RFUNC = void(*)(const std::unordered_map<std::string, std::string>& result);
+
+void Simulator::Simulation::init() {
+	m_lib_handle = LoadLibraryA(m_dll_filename.c_str());
+	if (m_lib_handle == NULL) {
+		throw std::exception();
+	}
+	m_func = reinterpret_cast<CREATE_SIMULATION_INSTANCE_FUNC>(GetProcAddress(m_lib_handle, "CreateSimulationInstance"));
+	if (m_func == NULL) {
+		throw std::exception();
+	}
+}
+
+void Simulator::Simulation::terminate() {
+	if(m_lib_handle != NULL) FreeLibrary(m_lib_handle);
+}
+
+void Simulator::Viewer::init() {
+	m_lib_handle = LoadLibraryA(m_dll_filename.c_str());
+	if (m_lib_handle == NULL) {
+		throw std::exception();
+	}
+	m_simulator_begin_func	 = reinterpret_cast<ON_SIMULATOR_BEGIN_FUNC>	(GetProcAddress(m_lib_handle, "OnSimulatorBegin"));
+	m_simulations_begin_func = reinterpret_cast<ON_SIMULATIONS_BEGIN_FUNC>	(GetProcAddress(m_lib_handle, "OnSimulationsBegin"));
+	m_simulation_begin_func  = reinterpret_cast<ON_SIMULATION_BEGIN_FUNC>	(GetProcAddress(m_lib_handle, "OnSimulationBegin"));
+	m_simulation_end_func	 = reinterpret_cast<ON_SIMULATION_END_FUNC>		(GetProcAddress(m_lib_handle, "OnSimulationEnd"));
+	m_simulations_end_func	 = reinterpret_cast<ON_SIMULATIONS_END_FUNC>	(GetProcAddress(m_lib_handle, "OnSimulationsEnd"));
+	m_simulator_end_func	 = reinterpret_cast<ON_SIMULATOR_END_FUNC>		(GetProcAddress(m_lib_handle, "OnSimulatorEnd"));
+	if (m_simulator_begin_func	 == NULL || 
+		m_simulations_begin_func == NULL || 
+		m_simulation_begin_func  == NULL || 
+		m_simulation_end_func	 == NULL ||
+		m_simulations_end_func	 == NULL ||
+		m_simulator_end_func	 == NULL) {
+		throw std::exception();
+	}
+}
+
+void Simulator::Viewer::terminate() {
+	if (m_lib_handle != NULL) FreeLibrary(m_lib_handle);
+}
+
+void Simulator::Viewers::init() {
+	for (auto& viewer : m_viewers)
+	{
+		viewer.init();
+	}
+}
+
+void Simulator::Viewers::terminate() {
+	for (auto& viewer : m_viewers)
+	{
+		viewer.terminate();
+	}
+}
 
 void Simulator::run() {
-	const HMODULE sim_lib_handle = LoadLibraryA(m_conf.m_simulation_dll_filename.c_str());
-	const std::vector<HMODULE> result_lib_handlers = [](const Config& conf) {
-		std::vector<HMODULE> ret;
-		for (const auto& result_output_dll_filename : conf.m_output_dlls_filename)
-		{
-			ret.push_back(LoadLibraryA(result_output_dll_filename.c_str()));
-		}
-		return ret;
-	}(m_conf);
-	if (sim_lib_handle == NULL || std::any_of(result_lib_handlers.begin(), result_lib_handlers.end(), [](const HMODULE& handle) { return handle == NULL; })) {
-		MessageBoxA(NULL, "指定したdllファイルが見つかりませんでした", "error", MB_ICONERROR);
-		return;
-	}
+	Simulation sim(m_conf.m_simulation_dll_filename);
+	Viewers viewers(m_conf);
+	try {
+		// シミュレータ、ビューアの初期化処理
+		sim.init();
+		viewers.init();
 
-	const CFUNC CreateSimulationInstance = reinterpret_cast<CFUNC>(GetProcAddress(sim_lib_handle, "CreateSimulatorInstance"));
-	const std::vector<RFUNC> OutputResultFunctions = [](const std::vector<HMODULE>& result_lib_handlers) {
-		std::vector<RFUNC> ret;
-		for (const auto& result_handle_module : result_lib_handlers)
+		// シミュレータを動かす
+		viewers.onSimulatorBegin(m_conf);
+		// パラメータ表から一行ずつパラメータを取り出す
+		for (const auto& row_head : m_param_table.getRowHeaders())
 		{
-			ret.push_back(reinterpret_cast<RFUNC>(GetProcAddress(result_handle_module, "OutputResult")));
+			const auto param = m_param_table.getRow(row_head);
+			viewers.onSimulationsBegin(row_head, param);
+			std::vector<std::unordered_map<std::string, std::string>> results(m_conf.m_number_of_trials);
+			// 試行回数分、シミュレーションを行い、結果を出力する
+			for (size_t i = 0; i < m_conf.m_number_of_trials; i++)
+			{
+				viewers.onSimulationBegin(i);
+				const auto result = std::unique_ptr<sim::IRunnable>(sim.createInstance(param))->run();
+				results.at(i) = result;
+				viewers.onSimulationEnd(result);
+			}
+			viewers.onSimulationsEnd(results);
 		}
-		return ret;
-	}(result_lib_handlers);
-	if (CreateSimulationInstance == NULL || std::any_of(OutputResultFunctions.begin(), OutputResultFunctions.end(), [](const RFUNC& func) { return func == NULL; })) {
-		MessageBoxA(NULL, "関数の呼び出しに失敗しました", "error", MB_ICONERROR);
-		return;
+		viewers.onSimulatorEnd();
 	}
+	catch(const std::exception& ex){
+		
+	}
+	sim.terminate();
+	viewers.terminate();
 
-	const auto row_heads = m_param_table.getRowHeaders();
-	for (const auto& row_head : row_heads)
-	{
-		const auto simulation = std::unique_ptr<sim::IRunnable>(CreateSimulationInstance(row_head, m_param_table));
-		simulation->run();
-		for (const auto& OutputResult : OutputResultFunctions)
-		{
-			OutputResult(simulation->toMap());
-		}
-	}
-
-	FreeLibrary(sim_lib_handle);
-	for (const auto& result_lib_handle : result_lib_handlers)
-	{
-		FreeLibrary(result_lib_handle);
-	}
 }
