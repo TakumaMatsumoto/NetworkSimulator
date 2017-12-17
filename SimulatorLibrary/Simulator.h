@@ -2,7 +2,7 @@
 #include <memory>
 #include "Config.h"
 #include "ISimulation.h"
-#include "IViewer.h"
+#include "ISimulationObserver.h"
 #include "IFactory.h"
 #include "Table.h"
 #include <functional>
@@ -14,27 +14,27 @@ namespace sim {
 	*/
 	class RunnableEnvironmentFactory {
 		const std::unique_ptr<IFactory<ISimulation>> mp_simulation_factory;
-		const std::unique_ptr<IFactory<IViewer>> mp_viewer_factory;
+		const std::unique_ptr<IFactory<ISimulationObserver>> mp_simlation_observer_factory;
 	public:
 		RunnableEnvironmentFactory(
 			IFactory<ISimulation>* const p_simulation_factory,
-			IFactory<IViewer>* const p_viewer_factory):
-		mp_simulation_factory(p_simulation_factory), mp_viewer_factory(p_viewer_factory){
+			IFactory<ISimulationObserver>* const p_simulation_observer_factory):
+		mp_simulation_factory(p_simulation_factory), mp_simlation_observer_factory(p_simulation_observer_factory){
 
 		}
 		ISimulation* createSimulationInstance(const std::unordered_map<std::string, std::string>& param_map) const {
 			return mp_simulation_factory->createInstance(param_map);
 		}
-		IViewer* createViewerInstance(const std::unordered_map<std::string, std::string>& param_map) const {
-			return mp_viewer_factory->createInstance(param_map);
+		ISimulationObserver* createSimulationObserverInstance(const std::unordered_map<std::string, std::string>& param_map) const {
+			return mp_simlation_observer_factory->createInstance(param_map);
 		}
 		void init() {
 			mp_simulation_factory->init();
-			mp_viewer_factory->init();
+			mp_simlation_observer_factory->init();
 		}
 		void terminate() {
 			mp_simulation_factory->terminate();
-			mp_viewer_factory->terminate();
+			mp_simlation_observer_factory->terminate();
 		}
 	};
 
@@ -64,28 +64,28 @@ namespace sim {
 				// シミュレータ、ビューアファクトリーの初期化処理
 				mp_runnable_environment_factory->init();
 
-				const std::unique_ptr<IViewer> p_viewer(mp_runnable_environment_factory->createViewerInstance(m_conf.toMap()));
+				const std::unique_ptr<ISimulationObserver> p_observer(mp_runnable_environment_factory->createSimulationObserverInstance(m_conf.toMap()));
 				// シミュレータを動かす
-				p_viewer->onSimulatorBegin(m_conf);
+				p_observer->onSimulatorBegin(m_conf);
 				// パラメータ表から一行ずつパラメータを取り出す
 				for (const auto& row_head : m_conf.m_param_table.getRowHeaders())
 				{
 					const auto param = m_conf.m_param_table.getRow(row_head);
-					p_viewer->onSimulationsBegin(row_head, param);
+					p_observer->onSimulationsBegin(row_head, param);
 					std::vector<std::unordered_map<std::string, std::string>> results(m_conf.m_number_of_trials);
 					// 試行回数分、シミュレーションを行い、結果を出力する
 					for (unsigned int i = 0; i < m_conf.m_number_of_trials; i++)
 					{
-						p_viewer->onSimulationBegin(i);
+						p_observer->onSimulationBegin(i);
 						const auto result = std::unique_ptr<sim::ISimulation>(
 							mp_runnable_environment_factory->
 							createSimulationInstance(param))->run();
 						results.at(i) = result;
-						p_viewer->onSimulationEnd(i, result);
+						p_observer->onSimulationEnd(i, result);
 					}
-					p_viewer->onSimulationsEnd(row_head, results);
+					p_observer->onSimulationsEnd(row_head, results);
 				}
-				p_viewer->onSimulatorEnd();
+				p_observer->onSimulatorEnd();
 			}
 			catch (const std::exception& ex) {
 				m_exception_function(ex);

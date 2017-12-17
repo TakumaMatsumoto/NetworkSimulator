@@ -5,9 +5,9 @@
 
 namespace sim
 {
-	class IViewer {
+	class ISimulationObserver {
 	public:
-		virtual ~IViewer() = default;
+		virtual ~ISimulationObserver() = default;
 		// シミュレータ開始時に実行される関数
 		// @param conf: シミュレータの設定
 		virtual void onSimulatorBegin(const Config& conf) = 0;

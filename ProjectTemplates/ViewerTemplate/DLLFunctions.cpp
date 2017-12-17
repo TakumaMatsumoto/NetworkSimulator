@@ -4,7 +4,7 @@ using namespace std;
 
 namespace sim {
 	namespace sample {
-		class Viewer : public IViewer {
+		class Viewer : public ISimulationObserver {
 		public:
 			// シミュレータ開始時に実行される関数
 			// @param conf: シミュレータの設定

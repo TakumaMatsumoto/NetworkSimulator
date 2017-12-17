@@ -15,7 +15,7 @@ namespace sim {
 			unsigned int m_area_width;
 			// ƒGƒŠƒA‚‚³
 			unsigned int m_area_height;
-			static Config createFromTable(const table::RowHeader& row_header, const table::Table& tbl);
+			static Config createFromMap(const std::unordered_map<std::string, std::string>& umap);
 		};
 	}
 }

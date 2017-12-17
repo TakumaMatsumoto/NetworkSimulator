@@ -18,7 +18,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SimulatorLibrary", "Simulat
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SimpleWirelessNetwork", "NetworkLibrary\SimpleWirelessNetwork\SimpleWirelessNetwork.vcxproj", "{DE81BDF1-7DFA-4004-A3CB-0D0A121531A2}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SimulationViewer", "SimulationViewer", "{680A4713-3198-4969-8325-0A359569DA3F}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SimulationObserver", "SimulationObserver", "{680A4713-3198-4969-8325-0A359569DA3F}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ConsoleViewer", "SimulationViewer\ConsoleViewer\ConsoleViewer.vcxproj", "{0C1993CB-DF4A-4A92-A03C-0C0D0F3E2D23}"
 EndProject

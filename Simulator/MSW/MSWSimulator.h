@@ -3,7 +3,7 @@
 #include "Table.h"
 #include "Config.h"
 #include "ISimulation.h"
-#include "IViewer.h"
+#include "ISimulationObserver.h"
 #include "MSWConfig.h"
 #include "IFactory.h"
 

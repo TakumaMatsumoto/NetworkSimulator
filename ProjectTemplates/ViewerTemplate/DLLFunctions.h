@@ -1,6 +1,6 @@
 #pragma once
 #include <unordered_map>
 #include <string>
-#include "IViewer.h"
+#include "ISimulationObserver.h"
 
-sim::IViewer* CreateInstance(const std::unordered_map<std::string, std::string>& param_map);
+sim::ISimulationObserver* CreateInstance(const std::unordered_map<std::string, std::string>& param_map);

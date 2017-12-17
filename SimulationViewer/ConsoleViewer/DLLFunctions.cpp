@@ -3,6 +3,6 @@
 #include "Viewer.h"
 using namespace std;
 
-sim::IViewer* CreateInstance(const std::unordered_map<std::string, std::string>& param_map) {
+sim::ISimulationObserver* CreateInstance(const std::unordered_map<std::string, std::string>& param_map) {
 	return new sim::viewer::Console();
 }
