@@ -19,11 +19,13 @@ namespace sim
 		// @param current_trial_number: 現在の試行回数
 		virtual void onSimulationBegin(const unsigned int current_trial_number) = 0;
 		// シミュレーションが終了する毎に実行される関数
+		// @param current_trial_number: 現在の試行回数
 		// @param result: シミュレーション結果
-		virtual void onSimulationEnd(const std::unordered_map<std::string, std::string>& result) = 0;
+		virtual void onSimulationEnd(const unsigned int current_trial_number, const std::unordered_map<std::string, std::string>& result) = 0;
 		// ある一つのパラメータ環境下でのシミュレーションが終了するタイミングで実行される関数
+		// @param param_name:	シミュレーション設定の名前
 		// @param results: 試行回数分のシミュレーション結果
-		virtual void onSimulationsEnd(const std::vector<std::unordered_map<std::string, std::string>>& results) = 0;
+		virtual void onSimulationsEnd(const std::string& param_name, const std::vector<std::unordered_map<std::string, std::string>>& results) = 0;
 		// シミュレータ終了時に実行される関数
 		virtual void onSimulatorEnd() = 0;
 	};

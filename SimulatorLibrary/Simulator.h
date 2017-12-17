@@ -81,9 +81,9 @@ namespace sim {
 							mp_runnable_environment_factory->
 							createSimulationInstance(param))->run();
 						results.at(i) = result;
-						p_viewer->onSimulationEnd(result);
+						p_viewer->onSimulationEnd(i, result);
 					}
-					p_viewer->onSimulationsEnd(results);
+					p_viewer->onSimulationsEnd(row_head, results);
 				}
 				p_viewer->onSimulatorEnd();
 			}
