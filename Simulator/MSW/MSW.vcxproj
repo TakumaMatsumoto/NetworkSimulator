@@ -119,10 +119,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Simulator.h" />
+    <ClInclude Include="MSWConfig.h" />
+    <ClInclude Include="MSWSimulator.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Simulator.cpp" />
+    <ClCompile Include="MSWSimulator.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
