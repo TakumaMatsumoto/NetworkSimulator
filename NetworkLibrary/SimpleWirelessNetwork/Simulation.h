@@ -8,7 +8,8 @@ namespace sim {
 		class Simulation : public ISimulation {
 			const swn::Config m_conf;
 		public:
-			Simulation(const std::unordered_map<std::string, std::string>& param_map) : m_conf(Config::createFromMap(param_map)) {
+			Simulation(const std::unordered_map<std::string, std::string>& param_map) 
+				: m_conf(Config::createFromMap(param_map)) {
 
 			}
 			std::unordered_map<std::string, std::string> run() override;
