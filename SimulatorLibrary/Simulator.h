@@ -13,14 +13,20 @@ namespace sim {
 
 	*/
 	class RunnableEnvironmentFactory {
-	public:
 		const std::unique_ptr<IFactory<ISimulation>> mp_simulation_factory;
 		const std::unique_ptr<IFactory<IViewer>> mp_viewer_factory;
+	public:
 		RunnableEnvironmentFactory(
 			IFactory<ISimulation>* const p_simulation_factory,
 			IFactory<IViewer>* const p_viewer_factory):
 		mp_simulation_factory(p_simulation_factory), mp_viewer_factory(p_viewer_factory){
 
+		}
+		ISimulation* createSimulationInstance(const std::unordered_map<std::string, std::string>& param_map) const {
+			return mp_simulation_factory->createInstance(param_map);
+		}
+		IViewer* createViewerInstance(const std::unordered_map<std::string, std::string>& param_map) const {
+			return mp_viewer_factory->createInstance(param_map);
 		}
 		void init() {
 			mp_simulation_factory->init();
@@ -58,7 +64,7 @@ namespace sim {
 				// シミュレータ、ビューアファクトリーの初期化処理
 				mp_runnable_environment_factory->init();
 
-				const std::unique_ptr<IViewer> p_viewer(mp_runnable_environment_factory->mp_viewer_factory->createInstance(m_conf.toMap()));
+				const std::unique_ptr<IViewer> p_viewer(mp_runnable_environment_factory->createViewerInstance(m_conf.toMap()));
 				// シミュレータを動かす
 				p_viewer->onSimulatorBegin(m_conf);
 				// パラメータ表から一行ずつパラメータを取り出す
@@ -73,8 +79,7 @@ namespace sim {
 						p_viewer->onSimulationBegin(i);
 						const auto result = std::unique_ptr<sim::ISimulation>(
 							mp_runnable_environment_factory->
-							mp_simulation_factory->
-							createInstance(param))->run();
+							createSimulationInstance(param))->run();
 						results.at(i) = result;
 						p_viewer->onSimulationEnd(result);
 					}
