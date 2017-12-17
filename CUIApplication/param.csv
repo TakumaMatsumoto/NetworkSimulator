@@ -1,2 +1,2 @@
-,area_width,area_height,simulation_period,mobility_speed_min,mobility_speed_max,transmission_speed,transmission_range,message_size,message_interval,number_of_relay_nodes,routing_protocol,message_storing_capacity
-Param1,3000,3000,20000,0.9,1,250000,100,2000,30,2000,1,50
+,area_width,area_height,number_of_nodes,transmission_range,message_size,initial_energy
+Param1,3000,3000,100,100,2000,1000
