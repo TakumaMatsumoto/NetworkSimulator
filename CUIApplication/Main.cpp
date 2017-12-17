@@ -1,5 +1,8 @@
 #include "stdafx.h"
-#include "MSW\Simulator.h"
+#include "MSW\MSWSimulator.h"
+#include "Simulator.h"
+#include "MSW\MSWConfig.h"
+#include <memory>
 using namespace std;
 static const unsigned int DEFAULT_NUMBER_OF_TRIALS = 1000;
 
@@ -45,8 +48,7 @@ int main(int argc, char* argv[]) {
 		result_dlls_filename.push_back(argv[i]);
 	}
 
-	sim::msw::Simulator(
-		sim::Config(number_of_trials, sim_dll_filename, result_dlls_filename), 
-		table::FileStorage(param_table_filename).load()).run();
-	return 0;
+	const auto sim_conf		= sim::Config(number_of_trials, table::FileStorage(param_table_filename).load());
+	const auto msw_sim_conf = sim::msw::Config(sim_conf, sim_dll_filename, result_dlls_filename);
+	return sim::msw::Simulator(msw_sim_conf).run();
 }
