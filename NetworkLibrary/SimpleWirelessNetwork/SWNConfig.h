@@ -17,6 +17,8 @@ namespace sim {
 			unsigned int m_message_size;
 			// 初期エネルギー[J]
 			unsigned int m_initial_energy;
+			// レールの角度
+			std::vector<double> m_rails;
 			static Config createFromMap(const std::unordered_map<std::string, std::string>& umap);
 		};
 	}

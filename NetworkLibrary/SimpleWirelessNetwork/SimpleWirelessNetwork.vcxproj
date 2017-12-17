@@ -135,6 +135,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="DLLFunctions.h" />
+    <ClInclude Include="Node.h" />
+    <ClInclude Include="Result.h" />
     <ClInclude Include="Simulation.h" />
     <ClInclude Include="SWNConfig.h" />
   </ItemGroup>
