@@ -38,7 +38,7 @@ int main(int argc, char* argv[]) {
 			cout << "-i: filename of csv parameter table" << endl;
 			cout << "-r: number of trials" << endl;
 			cout << "arg1...: filenames of result dll" << endl;
-			return 0;
+			return -1;
 			break;
 		}
 	}
@@ -48,7 +48,27 @@ int main(int argc, char* argv[]) {
 		result_dlls_filename.push_back(argv[i]);
 	}
 
-	const auto sim_conf		= sim::Config(number_of_trials, table::FileStorage(param_table_filename).load());
-	const auto msw_sim_conf = sim::msw::Config(sim_conf, sim_dll_filename, result_dlls_filename);
-	return sim::msw::Simulator(msw_sim_conf).run();
+	if (argc == 1) {
+		cout << "Usage: "
+			<< argv[0]
+			<< " [-c arg]"
+			<< " [-i arg]"
+			<< " [-r arg]"
+			<< " arg1 ..." << endl;
+		cout << "option:" << endl;
+		cout << "-c: filename of simulation dll" << endl;
+		cout << "-i: filename of csv parameter table" << endl;
+		cout << "-r: number of trials" << endl;
+		cout << "arg1...: filenames of result dll" << endl;
+		return -1;
+	}
+	try {
+		const auto sim_conf = sim::Config(number_of_trials, table::FileStorage(param_table_filename).load());
+		const auto msw_sim_conf = sim::msw::Config(sim_conf, sim_dll_filename, result_dlls_filename);
+		return sim::msw::Simulator(msw_sim_conf).run();
+	}
+	catch (const std::exception& ex) {
+		cout << ex.what() << endl;
+	}
+	return -1;
 }
