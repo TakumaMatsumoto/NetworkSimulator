@@ -1,8 +1,3 @@
-LIBRARY ViewerTemplate
+LIBRARY SampleViewer
 EXPORTS
-	OnSimulatorBegin @1
-	OnSimulationsBegin @2
-	OnSimulationBegin @3
-	OnSimulationEnd @4
-	OnSimulationsEnd @5
-	OnSimulatorEnd @6
+	CreateInstance @1

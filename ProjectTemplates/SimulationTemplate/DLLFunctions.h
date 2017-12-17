@@ -1,5 +1,6 @@
 #pragma once
-#include "IRunnable.h"
-#include "Table.h"
+#include <unordered_map>
+#include <string>
+#include "Simulation.h"
 
-sim::IRunnable* CreateSimulationInstance(const std::unordered_map<std::string, std::string>& param_map);
+sim::ISimulation* CreateInstance(const std::unordered_map<std::string, std::string>& param_map);

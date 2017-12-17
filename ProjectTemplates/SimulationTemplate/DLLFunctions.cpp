@@ -1,7 +1,16 @@
 #include "DLLFunctions.h"
-#include "Simulation.h"
-using namespace sim::sample;
+#include "ISimulation.h"
 
-sim::IRunnable* CreateSimulationInstance(const std::unordered_map<std::string, std::string>& param_map) {
-	return new Simulation();
+namespace sim {
+	namespace sample {
+		class Simulation : public ISimulation {
+		public:
+			std::unordered_map<std::string, std::string> run() override {
+				return std::unordered_map<std::string, std::string>();
+			}
+		};
+	}
+}
+sim::ISimulation* CreateInstance(const std::unordered_map<std::string, std::string>& param_map) {
+	return new sim::sample::Simulation();
 }
