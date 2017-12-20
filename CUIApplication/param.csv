@@ -1,2 +1,2 @@
-,area_width,area_height,number_of_nodes,transmission_range,message_size,initial_energy,rails
-Param1,3000,3000,100,100,2000,1000,15|45|75
+,area_width,area_height,number_of_sensor_nodes,transmission_range,message_size,initial_energy,Eelec,Emp,rails
+Param1,3000,3000,100,100,2000,1000,0.01,0.01,15|45|75
