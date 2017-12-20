@@ -9,7 +9,7 @@ using namespace sim::msw;
 int Simulator::run() const {
 	const auto env_factory = new sim::RunnableEnvironmentFactory(
 		new DLLInstanceFactory<ISimulation>(m_conf.m_simulation_dll_filename),
-		new DLLInstanceFactory<ISimulationObserver>(m_conf.m_output_dlls_filename[0]));
+		new DLLInstanceFactory<ISimulationObserver>(m_conf.m_observer_dll_filename));
 	const sim::Simulator simulator(
 		env_factory, 
 		m_conf.m_sim_config,

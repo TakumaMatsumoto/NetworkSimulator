@@ -10,18 +10,18 @@ int main(int argc, char* argv[]) {
 	int opt;
 	opterr = 0;
 	unsigned int number_of_trials = DEFAULT_NUMBER_OF_TRIALS;
-	std::string sim_dll_filename;
-	std::vector<std::string> result_dlls_filename;
-	std::string param_table_filename;
-	while ((opt = getopt(argc, argv, "c:i:r:")) != -1)
+	std::string simulation_dll_filename;
+	std::string observer_dll_filename;
+	std::string param_table_filename = "param.csv";
+	while ((opt = getopt(argc, argv, "i:o:r:")) != -1)
 	{
 		switch (opt)
 		{
-		case 'c':
-			sim_dll_filename = optarg;
-			break;
 		case 'i':
 			param_table_filename = optarg;
+			break;
+		case 'o':
+			observer_dll_filename = optarg;
 			break;
 		case 'r':
 			number_of_trials = std::stoul(optarg);
@@ -29,42 +29,39 @@ int main(int argc, char* argv[]) {
 		default:
 			cout << "Usage: "
  				 << argv[0]
-				 << " [-c arg]" 
 				 << " [-i arg]"
+				 << " [-o arg]"
 				 << " [-r arg]"
-				 << " arg1 ..." << endl;
+				 << " arg" << endl;
 			cout << "option:" << endl;
-			cout << "-c: filename of simulation dll" << endl;
-			cout << "-i: filename of csv parameter table" << endl;
+			cout << "-i: filename of parameter csv file (default:param.csv)" << endl;
+			cout << "-o: filename of observer dll" << endl;
 			cout << "-r: number of trials" << endl;
-			cout << "arg1...: filenames of result dll" << endl;
+			cout << "arg: filename of simulation dll" << endl;
 			return -1;
 			break;
 		}
 	}
 
-	for (size_t i = optind; i < argc; i++)
-	{
-		result_dlls_filename.push_back(argv[i]);
-	}
-
 	if (argc == 1) {
 		cout << "Usage: "
 			<< argv[0]
-			<< " [-c arg]"
 			<< " [-i arg]"
+			<< " [-o arg]"
 			<< " [-r arg]"
-			<< " arg1 ..." << endl;
+			<< " arg" << endl;
 		cout << "option:" << endl;
-		cout << "-c: filename of simulation dll" << endl;
-		cout << "-i: filename of csv parameter table" << endl;
+		cout << "-i: filename of parameter csv file (default:param.csv)" << endl;
+		cout << "-o: filename of observer dll" << endl;
 		cout << "-r: number of trials" << endl;
-		cout << "arg1...: filenames of result dll" << endl;
+		cout << "arg: filename of simulation dll" << endl;
 		return -1;
 	}
+	simulation_dll_filename = argv[optind];
+
 	try {
 		const auto sim_conf = sim::Config(number_of_trials, table::FileStorage(param_table_filename).load());
-		const auto msw_sim_conf = sim::msw::Config(sim_conf, sim_dll_filename, result_dlls_filename);
+		const auto msw_sim_conf = sim::msw::Config(sim_conf, simulation_dll_filename, observer_dll_filename);
 		return sim::msw::Simulator(msw_sim_conf).run();
 	}
 	catch (const std::exception& ex) {
