@@ -27,7 +27,9 @@ namespace sim {
 			void consume(const double energy) {
 				m_left_energy -= energy;
 			}
+			// 残りエネルギーを取得する
 			double getLeftEnergy() const { return m_left_energy; }
+			// 初期エネルギーを取得する
 			double getInitialEnergy() const { return m_initial_energy; }
 			bool isAlive() const {
 				return m_left_energy > 0.0;
