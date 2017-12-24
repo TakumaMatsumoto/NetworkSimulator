@@ -41,7 +41,7 @@ Config Config::createFromMap(const std::unordered_map<std::string, std::string>&
 	split(umap.at("rails"), "|", result);
 	for (const auto& s : result)
 	{
-		ret.m_rails.push_back(std::stod(s));
+		ret.m_rail_angles.push_back(std::stod(s));
 	}
 	return ret;
 }
