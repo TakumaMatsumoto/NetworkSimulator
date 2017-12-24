@@ -138,17 +138,18 @@
     <ClInclude Include="Battery.h" />
     <ClInclude Include="DLLFunctions.h" />
     <ClInclude Include="geo.h" />
+    <ClInclude Include="GeometryMap.h" />
     <ClInclude Include="INode.h" />
     <ClInclude Include="Node.h" />
     <ClInclude Include="Message.h" />
+    <ClInclude Include="Rail.h" />
     <ClInclude Include="Result.h" />
     <ClInclude Include="Simulation.h" />
-    <ClInclude Include="Space.h" />
     <ClInclude Include="SWNConfig.h" />
+    <ClInclude Include="UIDCreator.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DLLFunctions.cpp" />
-    <ClCompile Include="Node.cpp" />
     <ClCompile Include="Simulation.cpp" />
     <ClCompile Include="SWNConfig.cpp" />
   </ItemGroup>
