@@ -7,29 +7,33 @@ namespace sim {
 		class IMessage {
 		public:
 			virtual ~IMessage() = default;
-			virtual int getSize() const = 0;
+			virtual unsigned int getSize() const = 0;
 		};
 		class Message : public IMessage {
 		private:
 			unsigned int m_data_size;
 		public:
-			Message(const int data_size) : m_data_size(data_size) {
+			Message(const unsigned int data_size) : m_data_size(data_size) {
 
 			}
-			int getSize() const { return m_data_size; }
-			Message* createClone() const {
-				return new Message(m_data_size);
+			unsigned int getSize() const { return m_data_size; }
+			Message clone() const {
+				return Message(m_data_size);
 			}
 		};
 		class Messages : public IMessage {
-			std::vector<Message> m_msgs;
+		private:
+			std::vector<std::shared_ptr<IMessage>> mp_msgs;
 		public:
-			Messages(const std::vector<Message>& msgs) : m_msgs(msgs) {
-
+			Messages(const std::vector<std::shared_ptr<IMessage>>& p_msgs) : mp_msgs(p_msgs) {
 			}
-			int getSize() const { return std::accumulate(
-				m_msgs.begin(), m_msgs.end(),
-				0, [](int sum, const Message& elem) { return sum + elem.getSize(); });
+			void add(const std::shared_ptr<IMessage>& msg) {
+				mp_msgs.push_back(msg);
+			}
+			unsigned int getSize() const {
+				return std::accumulate(mp_msgs.begin(), mp_msgs.end(), 0, [](unsigned int init, const std::shared_ptr<IMessage>& msg) {
+					return init + msg->getSize();
+				});
 			}
 		};
 	}
