@@ -52,7 +52,8 @@ namespace sim {
 				return m_position;
 			}
 			virtual std::shared_ptr<IMessage> collectMessage() override {
-				if (mp_sender_node.lock() == nullptr) {
+				// 送信元が存在しないとき自身が保有するメッセージのみ送信する
+				if (mp_sender_node.lock()->getUID() == m_UID) {
 					m_battery.consume(m_antenner.sendTo(m_position, mp_receiver_node.lock()->getPosition(), *mp_sensored_message));
 					return mp_sensored_message;
 				}
