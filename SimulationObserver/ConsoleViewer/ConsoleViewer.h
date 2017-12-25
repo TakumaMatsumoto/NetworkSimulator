@@ -2,8 +2,8 @@
 #include "ISimulationObserver.h"
 
 namespace sim {
-	namespace viewer {
-		class Console : public ISimulationObserver {
+	namespace observer {
+		class ConsoleViewer : public ISimulationObserver {
 		public:
 			// シミュレータ開始時に実行される関数
 			// @param conf: シミュレータの設定

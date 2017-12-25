@@ -23,11 +23,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DLLFunctions.cpp" />
-    <ClCompile Include="Viewer.cpp" />
+    <ClCompile Include="ConsoleViewer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DLLFunctions.h" />
-    <ClInclude Include="Viewer.h" />
+    <ClInclude Include="ConsoleViewer.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>

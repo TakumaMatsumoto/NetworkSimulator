@@ -1,8 +1,8 @@
 #include <iostream>
 #include "DLLFunctions.h"
-#include "Viewer.h"
+#include "ConsoleViewer.h"
 using namespace std;
 
 sim::ISimulationObserver* CreateInstance(const std::unordered_map<std::string, std::string>& param_map) {
-	return new sim::viewer::Console();
+	return new sim::observer::ConsoleViewer();
 }
