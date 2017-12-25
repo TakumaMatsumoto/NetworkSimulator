@@ -13,13 +13,13 @@ void Console::onSimulatorBegin(const sim::Config& conf){
 // @param param_name:	シミュレーション設定の名前
 // @param param:		シミュレーション設定
 void Console::onSimulationsBegin(const std::string& param_name, const std::unordered_map<std::string, std::string>& param){
-	cout << param_name << endl;
+	cout << "name of current simulation parameter:" << param_name << endl;
 }
 
 // シミュレーションが開始する毎に実行される関数
 // @param current_trial_number: 現在の試行回数
 void Console::onSimulationBegin(const unsigned int current_trial_number) {
-	cout << current_trial_number << endl;
+	cout << "current trial:" << current_trial_number << endl;
 }
 
 // シミュレーションが終了する毎に実行される関数
