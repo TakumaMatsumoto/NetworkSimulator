@@ -35,6 +35,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ConsoleViewer", "Simulation
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ObserverTemplate", "ProjectTemplates\ObserverTemplate\ObserverTemplate.vcxproj", "{48F8665C-8686-4888-9B41-5775059A10A2}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CSVRecorder", "SimulationObserver\CSVRecorder\CSVRecorder.vcxproj", "{860329B6-613E-40D3-A473-05689D41C37D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -115,6 +117,14 @@ Global
 		{48F8665C-8686-4888-9B41-5775059A10A2}.Release|Win32.Build.0 = Release|Win32
 		{48F8665C-8686-4888-9B41-5775059A10A2}.Release|x64.ActiveCfg = Release|x64
 		{48F8665C-8686-4888-9B41-5775059A10A2}.Release|x64.Build.0 = Release|x64
+		{860329B6-613E-40D3-A473-05689D41C37D}.Debug|Win32.ActiveCfg = Debug|Win32
+		{860329B6-613E-40D3-A473-05689D41C37D}.Debug|Win32.Build.0 = Debug|Win32
+		{860329B6-613E-40D3-A473-05689D41C37D}.Debug|x64.ActiveCfg = Debug|x64
+		{860329B6-613E-40D3-A473-05689D41C37D}.Debug|x64.Build.0 = Debug|x64
+		{860329B6-613E-40D3-A473-05689D41C37D}.Release|Win32.ActiveCfg = Release|Win32
+		{860329B6-613E-40D3-A473-05689D41C37D}.Release|Win32.Build.0 = Release|Win32
+		{860329B6-613E-40D3-A473-05689D41C37D}.Release|x64.ActiveCfg = Release|x64
+		{860329B6-613E-40D3-A473-05689D41C37D}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -126,6 +136,7 @@ Global
 		{799883D5-D0F3-4B42-B208-C63AF00D3C3D} = {176DCB62-4091-4075-B492-F749D50CD267}
 		{0C1993CB-DF4A-4A92-A03C-0C0D0F3E2D23} = {680A4713-3198-4969-8325-0A359569DA3F}
 		{48F8665C-8686-4888-9B41-5775059A10A2} = {EF1A5434-D381-4DA2-8218-DE5F599DA132}
+		{860329B6-613E-40D3-A473-05689D41C37D} = {680A4713-3198-4969-8325-0A359569DA3F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E413ED00-7D7B-478B-90FB-8ADF8342612A}
