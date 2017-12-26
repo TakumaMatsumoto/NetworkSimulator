@@ -146,10 +146,15 @@ namespace geo{
 	public:
 		Point<T> center;
 		T range;
-		Circle(const Point<T>& center, const T range) : center(center), range(range){
+		Circle(const Point<T>& center, const T range) 
+			: center(center), range(range){
 
 		}
 		Circle() : range(0){
+
+		}
+		// ˆø”‚Å—^‚¦‚ç‚ê‚½’¼ü‚Æ‚ÌŒğ“_‚ğ‹‚ß‚é
+		std::pair<Point<T>, Point<T>> calcIntercepts(const StraightLine<T>& line) {
 
 		}
 		bool include(const Point<T>& point){
