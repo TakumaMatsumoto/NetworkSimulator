@@ -51,10 +51,10 @@ std::unordered_map<std::string, std::string> Simulation::run() {
 	unsigned int fnd_round = 0;
 	// 全ノードが死ぬまでにかかるラウンド数
 	unsigned int and_round = 0;
+	// 各ラウンドにおけるノード生存率
+	std::vector<double> nodes_survival_rates;
 	while (obj.mp_sensor_nodes.includeAliveOne())
 	{
-		// 地図情報を更新する
-		obj.mp_gmap->update();
 		// 全センサノードがデータのセンシングを行う
 		obj.mp_sensor_nodes.sensing();
 		// 全センサノードがレールへ移動する
@@ -70,8 +70,12 @@ std::unordered_map<std::string, std::string> Simulation::run() {
 		unsigned int size = p_msg->getSize();
 		// 全センサノードが初期位置へ戻る
 		obj.mp_sensor_nodes.returnToInitialPosition();
+		// 地図情報を更新する
+		obj.mp_gmap->update();
+		// 各種結果を更新
 		if (obj.mp_sensor_nodes.areAlive()) fnd_round++;
 		if (obj.mp_sensor_nodes.includeAliveOne()) and_round++;
+		nodes_survival_rates.push_back(static_cast<double>(obj.mp_gmap->getNumberOfNodes()) / (m_conf.m_number_of_sensor_nodes + 1));
 	}
-	return Result(fnd_round, and_round, 0.0, 0.0).toMap();
+	return Result(fnd_round, and_round, 0.0, 0.0, nodes_survival_rates).toMap();
 }
