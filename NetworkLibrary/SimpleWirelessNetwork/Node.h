@@ -2,16 +2,99 @@
 #include <memory>
 #include <vector>
 #include <algorithm>
-#include "Antenner.h"
 #include "Battery.h"
 #include "geo.h"
 #include "INode.h"
 #include "GeometryMap.h"
+#include "EnergyConsumption.h"
 
 namespace sim {
 	namespace swn {
 		class SensorNode : public INode {
 		private:
+			class EnergyManager {
+				// バッテリー
+				Battery m_battery;
+			public:
+				EnergyManager(const Battery& battery) : m_battery(battery) {
+				}
+				class IOperation {
+				public:
+					virtual ~IOperation() = default;
+					// 消費電力を計算する
+					virtual double calcPowerConsumption() const = 0;
+				};
+				// メッセージを送信する際の操作
+				class SendMessageOperation : public IOperation {
+				private:
+					// 1bitのデータを通信する際の消費電力[J/bit]
+					const double m_Eelec;
+					// 1bitのデータを1mだけ送信する際に使用される増幅器の消費電力[J/bit・m^2]
+					const double m_Eamp;
+					// 送受信間の点
+					const std::pair<geo::Point<double>, geo::Point<double>> m_points;
+					// 送信するメッセージ
+					const IMessage& m_message;
+				public:
+					SendMessageOperation(
+						const double Eelec, const double Eamp,
+						const std::pair<geo::Point<double>, geo::Point<double>>& points,
+						const IMessage& message) :
+						m_Eelec(Eelec), m_Eamp(Eamp),
+						m_points(points), m_message(message) {
+					}
+					double calcPowerConsumption() const override {
+						return
+							m_Eelec * m_message.getSize() +
+							m_Eamp * m_message.getSize() * pow(m_points.first.distanceTo(m_points.second), 2.0);
+					}
+				};
+				// メッセージを受信する際の操作
+				class ReceiveMessageOperation : public IOperation {
+					// 1bitのデータを通信する際の消費電力[J/bit]
+					const double m_Eelec;
+					// 受信するメッセージ
+					const IMessage& m_message;
+				public:
+					ReceiveMessageOperation(
+						const double Eelec,
+						const IMessage& message) :
+						m_Eelec(Eelec), m_message(message) {
+
+					}
+					double calcPowerConsumption() const {
+						return m_Eelec * m_message.getSize();
+					}
+				};
+				// 移動する際の操作
+				class MoveOperation : public IOperation {
+					// 1m移動する際の消費電力[J/m]
+					const double m_Emov;
+					// 移動するポイント
+					const std::pair<geo::Point<double>, geo::Point<double>> m_points;
+				public:
+					MoveOperation(
+						const double Emov,
+						const std::pair<geo::Point<double>, geo::Point<double>>& points)
+						: m_Emov(Emov), m_points(points) {
+					}
+					double calcPowerConsumption() const {
+						return m_Emov * m_points.first.distanceTo(m_points.second);
+					}
+				};
+				// 引数で与えられた操作メッセージを元にバッテリーを操作する
+				void exec(const IOperation& opt) {
+					m_battery.consume(opt.calcPowerConsumption());
+				}
+				// バッテリーが生きている場合、有効とする
+				bool isValid() const {
+					return m_battery.isAlive();
+				}
+				// バッテリーが死んでいる場合、無効とする
+				bool isInvalid() const {
+					return !isValid();
+				}
+			};
 			// 固有ID
 			const unsigned int m_UID;
 			// 自身にメッセージを送信するノード
@@ -25,22 +108,27 @@ namespace sim {
 			// 現在位置
 			geo::Point<double> m_position;
 			// 通信可能範囲
-			double m_transmission_range;
-			// バッテリー
-			Battery m_battery;
-			// アンテナ
-			Antenner m_antenner;
+			double m_transmittable_range;
 			// マップ情報
 			std::weak_ptr<GeometryMap> mp_gmap;
+			// エネルギーを管理する
+			EnergyManager m_energy_manager;
+			// エネルギー消費量
+			EnergyConsumption m_energy_consumption;
+			void moveTo(const geo::Point<double>& dst) {
+				m_energy_manager.exec(EnergyManager::MoveOperation(m_energy_consumption.m_moving, { m_position, dst }));
+				m_position = dst;
+			}
 		public:
 			SensorNode(
 				const unsigned int UID,
 				const geo::Point<double>& position,
-				const double transmission_range,
+				const double transmittable_range,
 				const Battery& battery,
-				const Antenner& antenner) : 
+				const EnergyConsumption& energy_consumption) : 
 				m_UID(UID), m_initial_position(position), m_position(position),
-				m_transmission_range(transmission_range), m_battery(battery), m_antenner(antenner){
+				m_transmittable_range(transmittable_range), m_energy_manager(EnergyManager(battery)),
+				m_energy_consumption(energy_consumption){
 			}
 			virtual unsigned int getUID() const override {
 				return m_UID;
@@ -51,34 +139,55 @@ namespace sim {
 			virtual geo::Point<double> getPosition() const override {
 				return m_position;
 			}
+			// メッセージを集める(送受信・移動を含める)
 			virtual std::shared_ptr<IMessage> collectMessage() override {
-				// 送信元が存在しないとき自身が保有するメッセージのみ送信する
-				if (mp_sender_node.lock()->getUID() == m_UID) {
-					m_battery.consume(m_antenner.sendTo(m_position, mp_receiver_node.lock()->getPosition(), *mp_sensored_message));
-					return mp_sensored_message;
-				}
+				// 送信メッセージ
+				std::shared_ptr<Messages> send_msg = std::make_shared<Messages>();
+				// 自身がセンサしたメッセージを送信メッセージとして追加
+				send_msg->add(mp_sensored_message);
 				// 自身にメッセージを送信するノードが存在するときは受信処理を行う
-				// メッセージ受信
-				const auto recv_msg = mp_sender_node.lock()->collectMessage();
-				m_battery.consume(m_antenner.receive(*recv_msg));
-				// メッセージ生成&送信
-				const std::shared_ptr<IMessage> send_msg(new Messages({recv_msg, mp_sensored_message}));
-				m_battery.consume(m_antenner.sendTo(m_position, mp_receiver_node.lock()->getPosition(), *send_msg));
+				if (mp_sender_node.lock()->getUID() != m_UID) {
+					// メッセージ受信
+					const auto recv_msg = mp_sender_node.lock()->collectMessage();
+					// 受信分のエネルギーを消費
+					m_energy_manager.exec(EnergyManager::ReceiveMessageOperation(m_energy_consumption.m_communication_per_bit, *recv_msg));
+					// 受信したメッセージを送信メッセージとして追加
+					send_msg->add(recv_msg);
+				}
+				// 通信先ノードと通信不可能の時、通信可能範囲まで移動
+				if (!mp_receiver_node.lock()->getTransmittableArea().include(m_position)) {
+					const auto my_rail = mp_gmap.lock()->searchTheClosestRail(*this);
+					const auto intercepts = mp_receiver_node.lock()->getTransmittableArea().calcIntercepts(my_rail.getLine());
+					const auto new_pos = intercepts.first.distanceTo(m_position) < intercepts.second.distanceTo(m_position) ? intercepts.first : intercepts.second;
+					moveTo(new_pos);
+				}
+				// 送信分のエネルギーを消費
+				m_energy_manager.exec(EnergyManager::SendMessageOperation(
+					m_energy_consumption.m_communication_per_bit,
+					m_energy_consumption.m_transmission_per_bit,
+					{ m_position, mp_receiver_node.lock()->getPosition() },
+					*send_msg));
 				return send_msg;
+			}
+			virtual geo::Circle<double> getTransmittableArea() const override {
+				return geo::Circle<double>(m_position, m_transmittable_range);
 			}
 			// メッセージを取得する
 			void sensing(){
 				mp_sensored_message = std::shared_ptr<Message>(new Message(mp_gmap.lock()->fetchMessage(*this)));
 			}
+			// レールへ移動する
+			void moveToRail() {
+				const auto p_gmap = mp_gmap.lock();
+				// 最も近いレールを探索
+				const auto my_rail = p_gmap->searchTheClosestRail(*this);
+				// レールへ移動
+				const auto new_pos = my_rail.getClosestCoordinate(m_position);
+				moveTo(new_pos);
+			}
 			// 元の位置に戻る
 			void returnToInitialPosition() {
-				// 最も近いレールを探索
-				const auto my_rail = mp_gmap.lock()->searchTheClosestRail(*this);
-				// 初期位置からみたレール上の最短距離となる点へ移動
-				const auto new_position = my_rail.getClosestCoordinate(m_initial_position);
-				m_position = new_position;
-				// 初期位置へ戻る
-				m_position = m_initial_position;
+				moveTo(m_initial_position);
 			}
 			// 送信元ノードを探す
 			virtual void searchSender() override {
@@ -91,7 +200,7 @@ namespace sim {
 					// nodesは基地局に近い順に並んでいるので
 					// 走査中のノードのUIDが自身のUIDと同じかつiがlength-1の時は送信元は存在しない(自分自身を返すようにする)
 					// 走査中のノードのUIDが自身のUIDと同じかつiがlength-1以外の時はi+1が送信元ノードになる
-					for (int i = 0, length = nodes_on_my_rail.size(); i < length; i++)
+					for (unsigned int i = 0, length = static_cast<unsigned int>(nodes_on_my_rail.size()); i < length; i++)
 					{
 						const auto& node = nodes_on_my_rail[i];
 						if (node.lock()->getUID() == myUID && i == length - 1) return node;
@@ -99,23 +208,19 @@ namespace sim {
 					}
 					throw std::exception("can't find receiver");
 				}(m_UID);
-
 			}
-			// 送信先ノードを探す(移動有)
+			// 送信先ノードを探す
 			virtual void searchReceiver() override {
 				const auto p_gmap = mp_gmap.lock();
 				// 最も近いレールを探索
 				const auto my_rail = p_gmap->searchTheClosestRail(*this);
-				// レール上に移動する
-				const auto new_position = my_rail.getClosestCoordinate(m_initial_position);
-				m_position = new_position;
-				// 自身のレールと同じレール上にあるノードを選び出す
+				// 最も近いレールと同じレール上にあるノードを選び出す
 				const auto nodes_on_my_rail = p_gmap->searchNodesCloseToRail(my_rail);
 				mp_receiver_node = [&nodes_on_my_rail, &p_gmap](const unsigned int myUID) {
 					// nodesは基地局に近い順に並んでいるので
 					// 走査中のノードのUIDが自身のUIDと同じかつiが0以外の時はi-1が送信先ノードになる
 					// 走査中のノードのUIDが自身のUIDと同じかつiが0の時はbasenodeが送信先ノードになる
-					for (int i = 0, length = nodes_on_my_rail.size(); i < length; i++)
+					for (unsigned int i = 0, length = static_cast<unsigned int>(nodes_on_my_rail.size()); i < length; i++)
 					{
 						const auto& node = nodes_on_my_rail[i];
 						if (node.lock()->getUID() == myUID && i == 0) return p_gmap->searchBaseNode();
@@ -123,14 +228,13 @@ namespace sim {
 					}
 					throw std::exception("can't find receiver");
 				}(m_UID);
-				// TODO::送信先ノードと接続できる範囲まで移動
 			}
 			virtual void equip(const std::shared_ptr<GeometryMap>& p_gps) {
 				mp_gmap = p_gps;
 			}
 			// 生存フラグ
 			virtual bool isAlive() const {
-				return m_battery.isAlive();
+				return m_energy_manager.isValid();
 			}
 		};
 		class SensorNodes {
@@ -163,6 +267,14 @@ namespace sim {
 					p_node->sensing();
 				}
 			}
+			// レールへ移動する
+			void moveToRail() {
+				for (const auto& p_node : mp_nodes)
+				{
+					p_node->moveToRail();
+				}
+			}
+			// 初期位置に戻る
 			void returnToInitialPosition() {
 				for (const auto& p_node : mp_nodes)
 				{
@@ -210,10 +322,13 @@ namespace sim {
 			std::vector<std::weak_ptr<INode>> mp_receiver_nodes;
 			// マップ情報
 			std::weak_ptr<GeometryMap> mp_gmap;
+			// 通信可能範囲
+			double m_transmittable_range;
 		public:
 			BaseNode(const unsigned int UID, 
-				const geo::Point<double>& position)
-				: m_UID(UID), m_position(position) {
+				const geo::Point<double>& position,
+				const double transmittable_range)
+				: m_UID(UID), m_position(position), m_transmittable_range(transmittable_range) {
 			}
 			virtual unsigned int getSegmentID() const override {
 				return 0;
@@ -259,6 +374,9 @@ namespace sim {
 			// 生存フラグ
 			virtual bool isAlive() const {
 				return true;
+			}
+			virtual geo::Circle<double> getTransmittableArea() const override {
+				return geo::Circle<double>(m_position, m_transmittable_range);
 			}
 		};
 	}

@@ -16,11 +16,10 @@ Simulation::Object Simulation::createObject() {
 			m_conf.m_area_width * NRAND(),
 			m_conf.m_area_height * NRAND());
 		const auto battery = Battery(m_conf.m_initial_energy);
-		const auto antenner = Antenner(m_conf.m_consume_energy_for_communication_per_bit, m_conf.m_consume_energy_for_transmission_per_bit);
-		snodes.push_back(std::make_shared<SensorNode>(uid_creator.get(), point, m_conf.m_transmission_range, battery, antenner));
+		snodes.push_back(std::make_shared<SensorNode>(uid_creator.get(), point, m_conf.selectTransmissionRange(NRAND()), battery, m_conf.m_energy_consumption));
 	}
 	// 基地局(ベースノード)を配置
-	const auto base_node = std::make_shared<BaseNode>(uid_creator.get(), geo::Point<double>(0.0, 0.0));
+	const auto base_node = std::make_shared<BaseNode>(uid_creator.get(), geo::Point<double>(0.0, 0.0), m_conf.selectTransmissionRange(NRAND()));
 	// センサノードの配列を基地局に近い順にする
 	const auto sort_func = [&](const std::shared_ptr<SensorNode>& lhs, const std::shared_ptr<SensorNode>& rhs) {
 		return lhs->getPosition().distanceTo(base_node->getPosition()) < rhs->getPosition().distanceTo(base_node->getPosition());
@@ -56,13 +55,15 @@ std::unordered_map<std::string, std::string> Simulation::run() {
 		obj.mp_gmap->update();
 		// 全センサノードがデータのセンシングを行う
 		obj.mp_sensor_nodes.sensing();
-		// 全センサノードが送信先センサノードを探す(移動含)
+		// 全センサノードがレールへ移動する
+		obj.mp_sensor_nodes.moveToRail();
+		// 全センサノードが送信先センサノードを探す
 		obj.mp_sensor_nodes.searchReceiver();
 		// 全センサノードが送信元センサノードを探す
 		obj.mp_sensor_nodes.searchSender();
 		// ベースノードが収集元のノードを探す
 		obj.mp_base_node->searchSender();
-		// 収集元のノードからメッセージを取得する
+		// 収集元のノードからメッセージを取得する(移動含)
 		const auto p_msg = obj.mp_base_node->collectMessage();
 		unsigned int size = p_msg->getSize();
 		// 全センサノードが初期位置へ戻る

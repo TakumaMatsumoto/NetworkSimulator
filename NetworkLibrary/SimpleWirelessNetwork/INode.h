@@ -23,6 +23,8 @@ namespace sim {
 			virtual bool isAlive() const = 0;
 			// セグメント番号を取得する
 			virtual unsigned int getSegmentID() const = 0;
+			// 通信可能領域を取得する
+			virtual geo::Circle<double> getTransmittableArea() const = 0;
 		};
 	}
 }
