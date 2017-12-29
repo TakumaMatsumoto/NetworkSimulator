@@ -45,10 +45,7 @@ namespace sim {
 					{
 						std::vector<std::string> map;
 						split(str, "=", map);
-						for (const auto& val : map)
-						{
-							umap.insert(val[0], val[1]);
-						}
+						umap.insert({ map[0], map[1] });
 					}
 					return Config(umap.at("filename"));
 				}
