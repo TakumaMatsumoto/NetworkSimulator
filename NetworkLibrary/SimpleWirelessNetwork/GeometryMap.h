@@ -31,7 +31,7 @@ namespace sim {
 			Rail searchTheClosestRail(const INode& node) const {
 				unsigned int ret = 0;
 				double min_distance = DBL_MAX;
-				for (unsigned int i = 0, length = m_rails.size(); i < length; i++)
+				for (unsigned int i = 0, length = static_cast<unsigned int>(m_rails.size()); i < length; i++)
 				{
 					const double dis = m_rails[i].distanceTo(node.getPosition());
 					if (min_distance < dis) continue;

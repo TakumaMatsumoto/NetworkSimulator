@@ -25,6 +25,7 @@ namespace sim {
 		private:
 			std::vector<std::shared_ptr<IMessage>> mp_msgs;
 		public:
+			Messages() = default;
 			Messages(const std::vector<std::shared_ptr<IMessage>>& p_msgs) : mp_msgs(p_msgs) {
 			}
 			void add(const std::shared_ptr<IMessage>& msg) {
