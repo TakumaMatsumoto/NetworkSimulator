@@ -20,6 +20,9 @@ namespace sim {
 			geo::Point<double> getClosestCoordinate(const geo::Point<double>& point) const {
 				return m_line.getClosestCoordinate(point);
 			}
+			geo::StraightLine<double> getLine() const {
+				return m_line;
+			}
 		};
 	}
 }
