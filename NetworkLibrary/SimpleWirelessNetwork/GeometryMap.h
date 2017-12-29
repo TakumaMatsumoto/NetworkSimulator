@@ -21,7 +21,11 @@ namespace sim {
 				m_default_message(default_message), m_rails(rails), m_nodes(nodes) {
 			}
 			void update() {
-
+				m_nodes.erase(std::remove_if(m_nodes.begin(), m_nodes.end(),
+					[](const std::weak_ptr<INode>& p_node) { return !p_node.lock()->isAlive(); }), m_nodes.end());
+			}
+			size_t getNumberOfNodes() const {
+				return m_nodes.size();
 			}
 			std::vector<Rail> getRails() const {
 				return m_rails;
