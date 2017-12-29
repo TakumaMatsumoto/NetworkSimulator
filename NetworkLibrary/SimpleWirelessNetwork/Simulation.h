@@ -1,7 +1,7 @@
 #pragma once
 #include <unordered_map>
-#include "ISimulation.h"
-#include "SWNConfig.h"
+#include "SimulatorLibrary\ISimulation.h"
+#include "SimpleWirelessNetwork\Config.h"
 #include "Node.h"
 
 namespace sim {

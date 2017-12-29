@@ -1,4 +1,4 @@
-#include "SWNConfig.h"
+#include "SimpleWirelessNetwork\Config.h"
 #include <string>
 using namespace sim::swn;
 

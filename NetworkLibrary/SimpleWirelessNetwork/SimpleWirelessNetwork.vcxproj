@@ -112,7 +112,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)\SimulatorLibrary</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\NetworkLibrary\;$(SolutionDir)\</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <ModuleDefinitionFile>Source.def</ModuleDefinitionFile>
@@ -125,7 +125,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)\SimulatorLibrary</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\NetworkLibrary\;$(SolutionDir)\</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -145,13 +145,13 @@
     <ClInclude Include="Rail.h" />
     <ClInclude Include="Result.h" />
     <ClInclude Include="Simulation.h" />
-    <ClInclude Include="SWNConfig.h" />
+    <ClInclude Include="Config.h" />
     <ClInclude Include="UIDCreator.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DLLFunctions.cpp" />
     <ClCompile Include="Simulation.cpp" />
-    <ClCompile Include="SWNConfig.cpp" />
+    <ClCompile Include="Config.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Source.def" />

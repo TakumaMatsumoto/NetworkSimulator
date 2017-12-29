@@ -1,5 +1,5 @@
 #include "Simulation.h"
-#include "Table.h"
+#include "SimulatorLibrary\Table.h"
 #include "Result.h"
 #include "UIDCreator.h"
 using namespace sim::swn;
@@ -48,8 +48,10 @@ std::vector<std::weak_ptr<INode>> Simulation::Object::getNodes() const {
 std::unordered_map<std::string, std::string> Simulation::run() {
 	auto obj = createObject();
 	// 一つのノードが死ぬまでにかかるラウンド数を数える
-	unsigned int round = 0;
-	while (obj.mp_sensor_nodes.areAlive())
+	unsigned int fnd_round = 0;
+	// 全ノードが死ぬまでにかかるラウンド数
+	unsigned int and_round = 0;
+	while (obj.mp_sensor_nodes.includeAliveOne())
 	{
 		// 地図情報を更新する
 		obj.mp_gmap->update();
@@ -68,7 +70,8 @@ std::unordered_map<std::string, std::string> Simulation::run() {
 		unsigned int size = p_msg->getSize();
 		// 全センサノードが初期位置へ戻る
 		obj.mp_sensor_nodes.returnToInitialPosition();
-		round++;
+		if (obj.mp_sensor_nodes.areAlive()) fnd_round++;
+		if (obj.mp_sensor_nodes.includeAliveOne()) and_round++;
 	}
-	return Result(round, 0, 0.0, 0.0).toMap();
+	return Result(fnd_round, and_round, 0.0, 0.0).toMap();
 }
