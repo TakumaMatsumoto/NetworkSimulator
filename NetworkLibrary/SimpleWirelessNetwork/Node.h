@@ -264,35 +264,35 @@ namespace sim {
 			void sensing() {
 				for (const auto& p_node : mp_nodes)
 				{
-					p_node->sensing();
+					if (p_node->isAlive()) p_node->sensing();
 				}
 			}
 			// ƒŒ[ƒ‹‚ÖˆÚ“®‚·‚é
 			void moveToRail() {
 				for (const auto& p_node : mp_nodes)
 				{
-					p_node->moveToRail();
+					if (p_node->isAlive()) p_node->moveToRail();
 				}
 			}
 			// ‰ŠúˆÊ’u‚É–ß‚é
 			void returnToInitialPosition() {
 				for (const auto& p_node : mp_nodes)
 				{
-					p_node->returnToInitialPosition();
+					if (p_node->isAlive()) p_node->returnToInitialPosition();
 				}
 			}
 			// ‘—MŒ³ƒm[ƒh‚ð’T‚·
 			virtual void searchSender() {
 				for (const auto& p_node : mp_nodes)
 				{
-					p_node->searchSender();
+					if (p_node->isAlive()) p_node->searchSender();
 				}
 			}
 			// ‘—Mæƒm[ƒh‚ð’T‚·
 			virtual void searchReceiver() {
 				for (const auto& p_node : mp_nodes)
 				{
-					p_node->searchReceiver();
+					if (p_node->isAlive()) p_node->searchReceiver();
 				}
 			}
 			virtual void equip(const std::shared_ptr<GeometryMap>& p_gps){
