@@ -4,24 +4,23 @@
 
 namespace geo{
 	static const double PI = 3.141592653589793;
-	/*
-		点クラス
-		x,y座標を保有する
-	*/
 	template<typename T>
-	class Point{
+	class Vector2D {
 	public:
-		virtual ~Point() = default;
-		Point(const T x, const T y) : x(x), y(y){
+		virtual ~Vector2D() = default;
+		Vector2D(const T x, const T y) : x(x), y(y) {
 
 		}
-		Point() : x(0), y(0){
+		Vector2D() : x(0), y(0) {
 		}
 		T x, y;
-		double distanceTo(const Point& target) const{
+		double distanceTo(const Vector2D& target) const {
 			return sqrt(pow(x - target.x, 2.0) + pow(y - target.y, 2.0));
 		}
 	};
+
+	template<typename T> 
+	using Point = Vector2D<T>;
 
 	/*
 		線分クラス
@@ -101,6 +100,11 @@ namespace geo{
 				y_second = m_y_intercept;
 			return Point<T>(x_numer / x_denom, y_numer / y_denom + y_second);
 		}
+		// 単位ベクトルを取得する
+		Vector2D<T> getUnitVector() const {
+			const T numer = sqrt(1 + pow(m_slope, 2.0));
+			return Vector2D<T>(1.0 / numer, m_slope / numer);
+		}
 	};
 
 	/*
@@ -155,7 +159,17 @@ namespace geo{
 		}
 		// 引数で与えられた直線との交点を求める
 		std::pair<Point<T>, Point<T>> calcIntercepts(const StraightLine<T>& line) {
-
+			const Point<T> foot_of_perpendicular = line.getClosestCoordinate(center);
+			const auto length = sqrt(pow(range, 2.0) - pow(line.distanceTo(center), 2.0));
+			const Vector2D<T> unit_vector = line.getUnitVector();
+			return {
+				Point<T>(
+					foot_of_perpendicular.x + length * unit_vector.x,
+					foot_of_perpendicular.y + length * unit_vector.y),
+				Point<T>(
+					foot_of_perpendicular.x - length * unit_vector.x,
+					foot_of_perpendicular.y - length * unit_vector.y),
+			};
 		}
 		bool include(const Point<T>& point){
 			return center.distanceTo(point) <= range;
