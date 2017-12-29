@@ -3,7 +3,7 @@
 #include <functional>
 #include <algorithm>
 #include "Simulator.h"
-#include "MSWSimulator.h"
+#include "SimulatorLibrary\Simulator.h"
 using namespace sim::msw;
 
 int Simulator::run() const {

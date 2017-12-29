@@ -1,11 +1,11 @@
 #pragma once
 #include <Windows.h>
-#include "Table.h"
+#include "SimulatorLibrary\Table.h"
+#include "SimulatorLibrary\Config.h"
+#include "SimulatorLibrary\ISimulation.h"
+#include "SimulatorLibrary\ISimulationObserver.h"
 #include "Config.h"
-#include "ISimulation.h"
-#include "ISimulationObserver.h"
-#include "MSWConfig.h"
-#include "IFactory.h"
+#include "SimulatorLibrary\IFactory.h"
 
 namespace sim
 {

@@ -1,7 +1,7 @@
 #include "stdafx.h"
-#include "MSW\MSWSimulator.h"
-#include "Simulator.h"
-#include "MSW\MSWConfig.h"
+#include "MSW\Simulator.h"
+#include "SimulatorLibrary\Simulator.h"
+#include "MSW\Config.h"
 #include <memory>
 using namespace std;
 static const unsigned int DEFAULT_NUMBER_OF_TRIALS = 1000;
