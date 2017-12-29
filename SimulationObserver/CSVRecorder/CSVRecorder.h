@@ -29,7 +29,7 @@ void split(const std::string& s, const std::string& delim, List& result)
 namespace sim {
 	namespace observer {
 		class CSVRecorder : public ISimulationObserver {
-		private:
+		public:
 			class Config {
 			public:
 				const bool m_log = false;
@@ -38,14 +38,21 @@ namespace sim {
 				}
 				static Config createFromConfigFile() {
 					const std::string fname = "config.txt";
-					std::vector<std::string> result;
-					split(, "=", result);
-
+					std::ifstream ifs(fname);
+					std::string str;
+					std::unordered_map<std::string, std::string> umap;
+					while (getline(ifs, str))
+					{
+						std::vector<std::string> map;
+						split(str, "=", map);
+						for (const auto& val : map)
+						{
+							umap.insert(val[0], val[1]);
+						}
+					}
+					return Config(umap.at("filename"));
 				}
 			};
-			const Config m_conf;
-			table::Table m_table;
-		public:
 			CSVRecorder(const Config& conf) : m_conf(conf) {
 
 			}
@@ -102,6 +109,9 @@ namespace sim {
 			virtual void onSimulatorEnd() override {
 				table::FileStorage(m_conf.m_filename).save(m_table);
 			}
+		private:
+			const Config m_conf;
+			table::Table m_table;
 		};
 	}
 }
