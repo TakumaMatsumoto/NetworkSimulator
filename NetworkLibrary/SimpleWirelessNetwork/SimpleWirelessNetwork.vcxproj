@@ -134,9 +134,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Antenner.h" />
     <ClInclude Include="Battery.h" />
     <ClInclude Include="DLLFunctions.h" />
+    <ClInclude Include="EnergyConsumption.h" />
     <ClInclude Include="geo.h" />
     <ClInclude Include="GeometryMap.h" />
     <ClInclude Include="INode.h" />
