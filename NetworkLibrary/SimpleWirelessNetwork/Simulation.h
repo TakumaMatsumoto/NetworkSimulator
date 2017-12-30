@@ -26,7 +26,7 @@ namespace sim {
 				: m_conf(Config::createFromMap(param_map)) {
 
 			}
-			std::unordered_map<std::string, std::string> run() override;
+			sim::Result run() override;
 		};
 	}
 }

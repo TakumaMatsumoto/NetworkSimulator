@@ -27,7 +27,7 @@ namespace sim {
 				m_area_cover_rate(area_cover_rate),
 				m_nodes_survival_rates(nodes_survival_rates){
 			}
-			std::unordered_map<std::string, std::string> toMap() const {
+			sim::Result toSimResult() const {
 				std::string buf;
 				for (size_t i = 0, length = m_nodes_survival_rates.size(); i < length; i++)
 				{

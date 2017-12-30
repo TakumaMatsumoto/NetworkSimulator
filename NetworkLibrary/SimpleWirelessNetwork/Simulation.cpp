@@ -45,7 +45,7 @@ std::vector<std::weak_ptr<INode>> Simulation::Object::getNodes() const {
 	return ret;
 }
 
-std::unordered_map<std::string, std::string> Simulation::run() {
+sim::Result Simulation::run() {
 	auto obj = createObject();
 	// 一つのノードが死ぬまでにかかるラウンド数を数える
 	unsigned int fnd_round = 0;
@@ -77,5 +77,5 @@ std::unordered_map<std::string, std::string> Simulation::run() {
 		if (obj.mp_sensor_nodes.includeAliveOne()) and_round++;
 		nodes_survival_rates.push_back(static_cast<double>(obj.mp_gmap->getNumberOfNodes()) / (m_conf.m_number_of_sensor_nodes + 1));
 	}
-	return Result(fnd_round, and_round, 0.0, 0.0, nodes_survival_rates).toMap();
+	return Result(fnd_round, and_round, 0.0, 0.0, nodes_survival_rates).toSimResult();
 }
