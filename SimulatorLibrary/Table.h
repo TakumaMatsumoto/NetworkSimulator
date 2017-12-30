@@ -89,20 +89,21 @@ namespace table {
 		std::string toCSVText() const {
 			std::string ret = ",";
 			// ˆês–Ú
-			for (const auto& rheader : m_column_headers)
+			for (const auto& cheader : m_column_headers)
 			{
-				ret += rheader + ",";
+				ret += cheader + ",";
 			}
 			ret.pop_back();
 			ret += "\n";
 			// “ñs–ÚˆÈ~
-			for (const auto& lheader : m_row_headers)
+			for (const auto rheader : m_row_headers)
 			{
-				ret += lheader + ",";
-				for (const auto& rheader : m_column_headers)
+				ret += rheader + ",";
+				for (const auto cheader : m_column_headers)
 				{
-					const Index index = Index(RowHeader(lheader), ColumnHeader(rheader));
-					ret += m_data.at(index).m_value + ",";
+					const Index index = Index(RowHeader(rheader), ColumnHeader(cheader));
+					ret += m_data.find(index) == m_data.end() ? "" : m_data.at(index).m_value;
+					ret += ",";
 				}
 				ret.pop_back();
 				ret += "\n";
