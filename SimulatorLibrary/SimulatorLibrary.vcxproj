@@ -115,6 +115,8 @@
     <ClInclude Include="IFactory.h" />
     <ClInclude Include="ISimulation.h" />
     <ClInclude Include="ISimulationObserver.h" />
+    <ClInclude Include="Parameter.h" />
+    <ClInclude Include="Result.h" />
     <ClInclude Include="Simulator.h" />
     <ClInclude Include="Table.h" />
   </ItemGroup>

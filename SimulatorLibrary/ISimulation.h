@@ -1,5 +1,6 @@
 #pragma once
 #include <unordered_map>
+#include "Result.h"
 
 namespace sim
 {
@@ -7,6 +8,6 @@ namespace sim
 	public:
 		virtual ~ISimulation() = default;
 		// return: ハッシュ値にした実行結果
-		virtual std::unordered_map<std::string, std::string> run() = 0;
+		virtual Result run() = 0;
 	};
 }

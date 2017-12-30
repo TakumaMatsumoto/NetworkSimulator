@@ -1,11 +1,12 @@
 #pragma once
 #include <memory>
+#include <functional>
 #include "Config.h"
 #include "ISimulation.h"
 #include "ISimulationObserver.h"
 #include "IFactory.h"
 #include "Table.h"
-#include <functional>
+#include "Result.h"
 
 namespace sim {
 	/*
@@ -72,7 +73,7 @@ namespace sim {
 				{
 					const auto param = m_conf.m_param_table.getRow(row_head);
 					p_observer->onSimulationsBegin(row_head, param);
-					std::vector<std::unordered_map<std::string, std::string>> results(m_conf.m_number_of_trials);
+					Results results(m_conf.m_number_of_trials);
 					// 試行回数分、シミュレーションを行い、結果を出力する
 					for (unsigned int i = 0; i < m_conf.m_number_of_trials; i++)
 					{
