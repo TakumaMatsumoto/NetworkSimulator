@@ -3,6 +3,6 @@
 #include "CSVRecorder.h"
 using namespace std;
 
-sim::ISimulationObserver* CreateInstance(const std::unordered_map<std::string, std::string>& param_map) {
+sim::ISimulationObserver* CreateInstance(const sim::Parameter& param_map) {
 	return new sim::observer::CSVRecorder(sim::observer::CSVRecorder::Config::createFromConfigFile());
 }

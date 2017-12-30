@@ -24,13 +24,13 @@ namespace sim
 				// インスタンス生成のDLL関数
 				// @param
 				// param_map: パラメータのハッシュマップ(key: パラメータ名, value: パラメータ値(string))
-				using CREATE_INSTANCE_FUNC = T*(*)(const std::unordered_map<std::string, std::string>& param_map);
+				using CREATE_INSTANCE_FUNC = T*(*)(const sim::Parameter& param_map);
 				CREATE_INSTANCE_FUNC m_func;
 			public:
 				DLLInstanceFactory(const std::string& dll_filename) : m_dll_filename(dll_filename) {
 
 				}
-				T* createInstance(const std::unordered_map<std::string, std::string>& param_map) override {
+				T* createInstance(const sim::Parameter& param_map) override {
 					return m_func(param_map);
 				}
 				void init() override {
