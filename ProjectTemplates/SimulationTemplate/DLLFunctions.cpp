@@ -5,8 +5,8 @@ namespace sim {
 	namespace sample {
 		class Simulation : public ISimulation {
 		public:
-			std::unordered_map<std::string, std::string> run() override {
-				return std::unordered_map<std::string, std::string>();
+			sim::Result run() override {
+				return sim::Result();
 			}
 		};
 	}
