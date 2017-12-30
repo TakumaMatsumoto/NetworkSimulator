@@ -42,12 +42,25 @@ namespace sim {
 			// @param results: 試行回数分のシミュレーション結果
 			virtual void onSimulationsEnd(const std::string& param_name, const sim::Results& results) override;
 			// シミュレータ終了時に実行される関数
-			virtual void onSimulatorEnd() override {
-				table::FileStorage(m_conf.m_filename).save(m_table);
-			}
+			virtual void onSimulatorEnd() override;
 		private:
+			// テーブルの更新
+			// @param rup: sim::Resultに関わるユニークなペア
+			// rup first:  name
+			// rup second: type
+			void updateTable(const sim::ResultNameTypePair& ntp, const std::string& param_name, const sim::Results& results);
 			const Config m_conf;
-			table::Table m_table;
+			// 配列型の値を記録したテーブル
+			// first: カラム名
+			// second: テーブル
+			std::unordered_map<std::string, table::Table> m_tables_for_array_values;
+			table::Table& searchTableForColumn(const std::string& column) {
+				if (m_tables_for_array_values.find(column) == m_tables_for_array_values.end()) {
+					m_tables_for_array_values.insert({ column, table::Table() });
+				}
+				return m_tables_for_array_values.at(column);
+			}
+			table::Table m_table_for_primitive_values;
 		};
 	}
 }
