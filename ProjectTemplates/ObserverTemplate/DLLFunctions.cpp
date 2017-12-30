@@ -4,7 +4,7 @@ using namespace std;
 
 namespace sim {
 	namespace sample {
-		class Viewer : public ISimulationObserver {
+		class Observer : public ISimulationObserver {
 		public:
 			// シミュレータ開始時に実行される関数
 			// @param conf: シミュレータの設定
@@ -43,5 +43,5 @@ namespace sim {
 }
 
 sim::ISimulationObserver* CreateInstance(const std::unordered_map<std::string, std::string>& param_map) {
-	return new sim::sample::Viewer();
+	return new sim::sample::Observer();
 }
