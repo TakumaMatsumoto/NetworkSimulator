@@ -4,9 +4,11 @@
 #include <algorithm>
 #include "Simulator.h"
 #include "SimulatorLibrary\Simulator.h"
+#include <time.h>
 using namespace sim::msw;
 
 int Simulator::run() const {
+	srand(static_cast<unsigned int>(time(NULL)));
 	const auto env_factory = new sim::RunnableEnvironmentFactory(
 		new DLLInstanceFactory<ISimulation>(m_conf.m_simulation_dll_filename),
 		new DLLInstanceFactory<ISimulationObserver>(m_conf.m_observer_dll_filename));
