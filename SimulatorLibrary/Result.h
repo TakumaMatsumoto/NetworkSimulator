@@ -3,11 +3,12 @@
 #include <string>
 
 namespace sim {
-	class ResultValue {
-	public:
-		std::string m_type;
-		std::string m_value;
-	};
-	using Result = std::unordered_map<std::string, ResultValue>;
+	using ResultName = std::string;
+	using ResultType = std::string;
+	using ResultValue = std::string;
+	using ResultNameTypePair = std::pair<ResultName, ResultType>;
+	using ResultTypeValuePair = std::pair<ResultType, ResultValue>;
+	// –¼‘O‚ÆResultValue‚ð•R‚Ã‚¯‚Ä‚¢‚é
+	using Result = std::unordered_map<ResultName, ResultTypeValuePair>;
 	using Results = std::vector<Result>;
 }
