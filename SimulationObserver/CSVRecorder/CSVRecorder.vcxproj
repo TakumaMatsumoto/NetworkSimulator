@@ -22,6 +22,7 @@
     <None Include="Source.def" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="CSVRecorder.cpp" />
     <ClCompile Include="DLLFunctions.cpp" />
   </ItemGroup>
   <ItemGroup>
