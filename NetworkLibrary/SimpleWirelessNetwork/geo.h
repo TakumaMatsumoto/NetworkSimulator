@@ -49,11 +49,11 @@ namespace geo{
 	template<typename T>
 	class StraightLine {
 	private:
+	public:
 		// ŒX‚«
 		T m_slope;
 		// yØ•Ğ
 		T m_y_intercept;
-	public:
 		// return y = slope * x + y_intercept
 		// @param slope:		ŒX‚«
 		// @param y_intercept:	yØ•Ğ
@@ -166,6 +166,7 @@ namespace geo{
 		}
 		// ˆø”‚Å—^‚¦‚ç‚ê‚½’¼ü‚Æ‚ÌŒğ“_‚ğ‹‚ß‚é
 		std::pair<Point<T>, Point<T>> calcIntercepts(const StraightLine<T>& line) {
+			if (!intersects(line)) throw std::exception("circle does not intersect line");
 			const Point<T> foot_of_perpendicular = line.getClosestCoordinate(center);
 			const auto length = sqrt(pow(range, 2.0) - pow(line.distanceTo(center), 2.0));
 			const Vector2D<T> unit_vector = line.getUnitVector();
@@ -178,7 +179,14 @@ namespace geo{
 					foot_of_perpendicular.y - length * unit_vector.y),
 			};
 		}
-		bool include(const Point<T>& point){
+		// ˆø”‚Å—^‚¦‚ç‚ê‚½’¼ü‚Æ‚ÌŒğ‚í‚éê‡Atrue‚Æ‚È‚é
+		bool intersects(const StraightLine<T>& line) const{
+			const double
+				first = pow(line.m_slope * (line.m_y_intercept - center.y) - center.x, 2.0),
+				second = (pow(line.m_slope, 2.0) + 1.0) * (pow(center.x, 2.0) + pow(line.m_y_intercept - center.y, 2.0) - pow(range, 2.0));
+			return first - second >= 0;
+		}
+		bool include(const Point<T>& point) const{
 			return center.distanceTo(point) <= range;
 		}
 	};
