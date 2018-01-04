@@ -10,6 +10,8 @@ namespace sim {
 			virtual ~INode() = default;
 			// 固有IDを取得する
 			virtual unsigned int getUID() const = 0;
+			// 
+			virtual INode& getReceiver() = 0;
 			// 現在位置を取得する
 			virtual geo::Point<double> getPosition() const = 0;
 			// 送信元ノードを探す
