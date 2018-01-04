@@ -67,9 +67,12 @@ namespace sim {
 				{
 					// セグメントIDが0のとき基地局なのでスルー
 					if (node.lock()->getSegmentID() == 0) continue;
-					if (rail.getUID() == searchTheClosestRail(node.lock()->getPosition()).getUID()) ret.push_back(node);
+					if (rail.getUID() == orderRailsByDistance(node.lock()->getPosition())[0].getUID()) ret.push_back(node);
 				}
 				return ret;
+			}
+			std::vector<std::weak_ptr<INode>> getNodes() const {
+				return m_nodes;
 			}
 			// 引数で与えられたノードがセンシング可能な範囲内にメッセージが存在する場合、メッセージをとってくる
 			// 現在はどの場合であってもメッセージを取得するようにしてある
