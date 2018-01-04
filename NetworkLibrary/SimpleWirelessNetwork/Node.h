@@ -2,6 +2,7 @@
 #include <memory>
 #include <vector>
 #include <algorithm>
+#include <queue>
 #include "Battery.h"
 #include "geo.h"
 #include "INode.h"
@@ -98,7 +99,7 @@ namespace sim {
 			// 固有ID
 			const unsigned int m_UID;
 			// 自身にメッセージを送信するノード
-			std::weak_ptr<INode> mp_sender_node;
+			std::vector<std::weak_ptr<INode>> mp_sender_nodes;
 			// 自身のメッセージを送信するノード
 			std::weak_ptr<INode> mp_receiver_node;
 			// センシングにより得られたメッセージ
@@ -107,6 +108,8 @@ namespace sim {
 			const geo::Point<double> m_initial_position;
 			// 現在位置
 			geo::Point<double> m_position;
+			// 移動予定位置
+			std::queue<geo::Point<double>> m_points_to_move;
 			// 通信可能範囲
 			double m_transmittable_range;
 			// マップ情報
@@ -146,20 +149,21 @@ namespace sim {
 				// 自身がセンサしたメッセージを送信メッセージとして追加
 				send_msg->add(mp_sensored_message);
 				// 自身にメッセージを送信するノードが存在するときは受信処理を行う
-				if (mp_sender_node.lock()->getUID() != m_UID) {
-					// メッセージ受信
-					const auto recv_msg = mp_sender_node.lock()->collectMessage();
-					// 受信分のエネルギーを消費
-					m_energy_manager.exec(EnergyManager::ReceiveMessageOperation(m_energy_consumption.m_communication_per_bit, *recv_msg));
-					// 受信したメッセージを送信メッセージとして追加
-					send_msg->add(recv_msg);
+				for (const auto& p_sender_node : mp_sender_nodes)
+				{
+					if (p_sender_node.lock()->getUID() != m_UID) {
+						// メッセージ受信
+						const auto recv_msg = p_sender_node.lock()->collectMessage();
+						// 受信分のエネルギーを消費
+						m_energy_manager.exec(EnergyManager::ReceiveMessageOperation(m_energy_consumption.m_communication_per_bit, *recv_msg));
+						// 受信したメッセージを送信メッセージとして追加
+						send_msg->add(recv_msg);
+					}
 				}
-				// 通信先ノードと通信不可能の時、通信可能範囲まで移動
-				if (!mp_receiver_node.lock()->getTransmittableArea().include(m_position)) {
-					const auto my_rail = mp_gmap.lock()->searchTheClosestRail(*this);
-					const auto intercepts = mp_receiver_node.lock()->getTransmittableArea().calcIntercepts(my_rail.getLine());
-					const auto new_pos = intercepts.first.distanceTo(m_position) < intercepts.second.distanceTo(m_position) ? intercepts.first : intercepts.second;
-					moveTo(new_pos);
+				// 送信先ノードを検索する際に記録したルートを元に移動する
+				while (!m_points_to_move.empty()) {
+					moveTo(m_points_to_move.front());
+					m_points_to_move.pop();
 				}
 				// 送信分のエネルギーを消費
 				m_energy_manager.exec(EnergyManager::SendMessageOperation(
@@ -174,13 +178,13 @@ namespace sim {
 			}
 			// メッセージを取得する
 			void sensing(){
-				mp_sensored_message = std::shared_ptr<Message>(new Message(mp_gmap.lock()->fetchMessage(*this)));
+				mp_sensored_message = std::shared_ptr<Message>(new Message(mp_gmap.lock()->fetchMessage(m_position)));
 			}
 			// レールへ移動する
 			void moveToRail() {
 				const auto p_gmap = mp_gmap.lock();
 				// 最も近いレールを探索
-				const auto my_rail = p_gmap->searchTheClosestRail(*this);
+				const auto my_rail = p_gmap->orderRailsByDistance(m_position)[0];
 				// レールへ移動
 				const auto new_pos = my_rail.getClosestCoordinate(m_position);
 				moveTo(new_pos);
@@ -193,7 +197,7 @@ namespace sim {
 			virtual void searchSender() override {
 				const auto p_gmap = mp_gmap.lock();
 				// 最も近いレールを探索
-				const auto my_rail = p_gmap->searchTheClosestRail(*this);
+				const auto my_rail = p_gmap->orderRailsByDistance(m_position)[0];
 				// 自身のレールと同じレール上にあるノードを選び出す
 				const auto nodes_on_my_rail = p_gmap->searchNodesCloseToRail(my_rail);
 				mp_sender_node = [&nodes_on_my_rail, &p_gmap](const unsigned int myUID) {
@@ -206,28 +210,66 @@ namespace sim {
 						if (node.lock()->getUID() == myUID && i == length - 1) return node;
 						if (node.lock()->getUID() == myUID) return nodes_on_my_rail[i + 1];
 					}
-					throw std::exception("can't find receiver");
+					throw std::exception("can't find sender");
 				}(m_UID);
 			}
 			// 送信先ノードを探す
 			virtual void searchReceiver() override {
 				const auto p_gmap = mp_gmap.lock();
-				// 最も近いレールを探索
-				const auto my_rail = p_gmap->searchTheClosestRail(*this);
-				// 最も近いレールと同じレール上にあるノードを選び出す
-				const auto nodes_on_my_rail = p_gmap->searchNodesCloseToRail(my_rail);
-				mp_receiver_node = [&nodes_on_my_rail, &p_gmap](const unsigned int myUID) {
-					// nodesは基地局に近い順に並んでいるので
-					// 走査中のノードのUIDが自身のUIDと同じかつiが0以外の時はi-1が送信先ノードになる
-					// 走査中のノードのUIDが自身のUIDと同じかつiが0の時はbasenodeが送信先ノードになる
-					for (unsigned int i = 0, length = static_cast<unsigned int>(nodes_on_my_rail.size()); i < length; i++)
+				auto pos = m_position;
+				while (true)
+				{
+					// 最も近いレールを探索
+					const auto my_rail = p_gmap->orderRailsByDistance(pos)[0];
+					// 最も近いレールと同じレール上にあるノードを選び出す
+					const auto nodes_on_my_rail = p_gmap->searchNodesCloseToRail(my_rail);
+					const auto p_receiver_node = [&nodes_on_my_rail, &p_gmap](const unsigned int myUID) {
+						// nodesは基地局に近い順に並んでいるので
+						// 走査中のノードのUIDが自身のUIDと同じかつiが0以外の時はi-1が送信先ノードになる
+						// 走査中のノードのUIDが自身のUIDと同じかつiが0の時はbasenodeが送信先ノードになる
+						for (unsigned int i = 0, length = static_cast<unsigned int>(nodes_on_my_rail.size()); i < length; i++)
+						{
+							const auto& node = nodes_on_my_rail[i];
+							if (node.lock()->getUID() == myUID && i == 0) return p_gmap->searchBaseNode();
+							if (node.lock()->getUID() == myUID && i != 0) return nodes_on_my_rail[i - 1];
+						}
+						throw std::exception("can't find receiver");
+					}(m_UID);
+					// 送信先ノードとの間にある自身から見て最も近い障害物を探す
+					std::vector<Obstacle> obstacles;
+					for (const auto& obstacle : p_gmap->searchObstaclesOnRail(my_rail))
 					{
-						const auto& node = nodes_on_my_rail[i];
-						if (node.lock()->getUID() == myUID && i == 0) return p_gmap->searchBaseNode();
-						if (node.lock()->getUID() == myUID && i != 0) return nodes_on_my_rail[i - 1];
+						const auto target_pos = obstacle.getPosition();
+						const auto receiver_pos = p_receiver_node.lock()->getPosition();
+						const auto rect = geo::Rectangle<double>(receiver_pos, m_position.x - receiver_pos.x, m_position.y - receiver_pos.y);
+						if (rect.include(target_pos)) {
+							obstacles.push_back(obstacle);
+						}
 					}
-					throw std::exception("can't find receiver");
-				}(m_UID);
+					{
+						const auto sort_func = [&pos](const Obstacle& l, const Obstacle& r) {
+							return l.getPosition().distanceTo(pos) < r.getPosition().distanceTo(pos);
+						};
+						std::sort(obstacles.begin(), obstacles.end(), sort_func);
+					}
+					// 送信先ノードとの間に障害物が存在しない場合、p_receiverを送信先ノードとして終了
+					if (obstacles.empty()) {
+						const auto intercepts = p_receiver_node.lock()->getTransmittableArea().calcIntercepts(my_rail.getLine());
+						const auto new_pos = intercepts.first.distanceTo(pos) < intercepts.second.distanceTo(pos) ? intercepts.first : intercepts.second;
+						m_points_to_move.push(new_pos);
+						mp_receiver_node = p_receiver_node;
+						break;
+					}
+					const auto target_obstacle = obstacles[0];
+					// 送信先との間に障害物が存在する場合、障害物と衝突する地点を記録し、
+					{
+						const auto intercepts = target_obstacle.getCollisionArea().calcIntercepts(my_rail.getLine());
+						const auto new_pos = intercepts.first.distanceTo(pos) < intercepts.second.distanceTo(pos) ? intercepts.first : intercepts.second;
+						m_points_to_move.push(new_pos);
+						const auto target_rail = mp_gmap.lock()->orderRailsByDistance(pos)[1];
+
+					}
+				}
 			}
 			virtual void equip(const std::shared_ptr<GeometryMap>& p_gps) {
 				mp_gmap = p_gps;

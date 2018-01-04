@@ -7,7 +7,6 @@ using namespace sim::swn;
 
 Simulation::Object Simulation::createObject() {
 	UIDCreator uid_creator;
-	// 初期化処理
 	std::vector<std::shared_ptr<SensorNode>> snodes;
 	// センサノードを配置
 	for (unsigned int i = 0; i < m_conf.m_number_of_sensor_nodes; i++)
@@ -20,19 +19,28 @@ Simulation::Object Simulation::createObject() {
 	}
 	// 基地局(ベースノード)を配置
 	const auto base_node = std::make_shared<BaseNode>(uid_creator.get(), geo::Point<double>(0.0, 0.0), m_conf.selectTransmissionRange(NRAND()));
-	// センサノードの配列を基地局に近い順にする
-	const auto sort_func = [&](const std::shared_ptr<SensorNode>& lhs, const std::shared_ptr<SensorNode>& rhs) {
+	// センサノードの配列を基地局から遠い順にする
+	const auto sort_func = [&base_node](const std::shared_ptr<SensorNode>& lhs, const std::shared_ptr<SensorNode>& rhs) {
 		return lhs->getPosition().distanceTo(base_node->getPosition()) < rhs->getPosition().distanceTo(base_node->getPosition());
 	};
 	std::sort(snodes.begin(), snodes.end(), sort_func);
 	SensorNodes sensor_nodes(snodes);
+
 	// マップ情報の設定
+	const auto rails = m_conf.getRails(uid_creator);
+	std::vector<Obstacle> obstacles;
+	for (unsigned int i = 0, length = m_conf.selectNumberOfObstacles(NRAND()); i < length; i++)
+	{
+		const auto line = rails[rails.size() * NRAND()].getLine();
+		const auto point = line.getPointAtX(m_conf.m_area_width * std::cos(line.getAngle()));
+		obstacles.push_back(Obstacle(uid_creator.get(), point));
+	}
 	const auto nodes = [&]() {
 		auto ret = sensor_nodes.getNodes();
 		ret.push_back(base_node);
 		return ret;
 	}();
-	const auto p_gmap = std::make_shared<GeometryMap>(Message(m_conf.m_message_size), m_conf.getRails(uid_creator), nodes);
+	const auto p_gmap = std::make_shared<GeometryMap>(Message(m_conf.m_message_size), rails, obstacles, nodes);
 	base_node->equip(p_gmap);
 	sensor_nodes.equip(p_gmap);
 

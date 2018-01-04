@@ -88,6 +88,10 @@ namespace geo{
 				denom = std::sqrt(std::pow(m_slope, 2.0) + std::pow(1.0, 2.0));
 			return numer / denom;
 		}
+		// x座標軸の値が引数で与えられた値のときの座標を取得する
+		geo::Point<T> getPointAtX(const T x) const {
+			return geo::Point<T>(x, m_slope * x + m_y_intercept);
+		}
 		// 引数で与えられた座標から見て最も近い線上の座標を求める
 		// 参考:https://detail.chiebukuro.yahoo.co.jp/qa/question_detail/q13115670548
 		// @param point: 
@@ -104,6 +108,9 @@ namespace geo{
 		Vector2D<T> getUnitVector() const {
 			const T numer = sqrt(1 + pow(m_slope, 2.0));
 			return Vector2D<T>(1.0 / numer, m_slope / numer);
+		}
+		double getAngle() const {
+			return std::atan(m_slope);
 		}
 	};
 
@@ -138,7 +145,7 @@ namespace geo{
 		int getTop() const{
 			return bottom_left.y + height;
 		}
-		bool include(const Point<T>& point){
+		bool include(const Point<T>& point) const{
 			bool inX = (bottom_left.x <= point.x) && (point.x <= bottom_left.x + width);
 			bool inY = (bottom_left.y <= point.y) && (point.y <= bottom_left.y + height);
 			return inX && inY;

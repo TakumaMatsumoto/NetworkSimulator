@@ -1,6 +1,7 @@
 #pragma once
 #include <memory>
 #include "INode.h"
+#include "Obstacle.h"
 
 namespace sim {
 	namespace swn {
@@ -12,13 +13,15 @@ namespace sim {
 		private:
 			const Message m_default_message;
 			std::vector<Rail> m_rails;
+			std::vector<Obstacle> m_obstacles;
 			std::vector<std::weak_ptr<INode>> m_nodes;
 		public:
 			GeometryMap(
 				const Message& default_message,
 				const std::vector<Rail>& rails,
+				const std::vector<Obstacle>& obstacles,
 				const std::vector<std::weak_ptr<INode>>& nodes) : 
-				m_default_message(default_message), m_rails(rails), m_nodes(nodes) {
+				m_default_message(default_message), m_rails(rails), m_obstacles(obstacles), m_nodes(nodes) {
 			}
 			void update() {
 				m_nodes.erase(std::remove_if(m_nodes.begin(), m_nodes.end(),
@@ -30,19 +33,23 @@ namespace sim {
 			std::vector<Rail> getRails() const {
 				return m_rails;
 			}
-			// 引数で与えられたノードからみて最も近いレールを取得する
-			// @param node: ノード
-			Rail searchTheClosestRail(const INode& node) const {
-				unsigned int ret = 0;
-				double min_distance = DBL_MAX;
-				for (unsigned int i = 0, length = static_cast<unsigned int>(m_rails.size()); i < length; i++)
+			// 引数で与えられた位置からみて近い順にしてレールを取得する
+			// @param pos: 位置情報
+			std::vector<Rail> orderRailsByDistance(const geo::Point<double>& pos) const {
+				std::vector<Rail> ret = m_rails;
+				const auto sort_func = [&pos](const Rail& l, const Rail& r) {
+					return l.distanceTo(pos) < r.distanceTo(pos);
+				};
+				return ret;
+			}
+			std::vector<Obstacle> searchObstaclesOnRail(const Rail& rail) const {
+				std::vector<Obstacle> ret;
+				const auto line = rail.getLine();
+				for (const auto& target : m_obstacles)
 				{
-					const double dis = m_rails[i].distanceTo(node.getPosition());
-					if (min_distance < dis) continue;
-					min_distance = dis;
-					ret = i;
+					if(target.closeTo(line)) ret.push_back(target);
 				}
-				return m_rails[ret];
+				return ret;
 			}
 			std::weak_ptr<INode> searchBaseNode() const {
 				for (const auto& node : m_nodes)
@@ -60,13 +67,13 @@ namespace sim {
 				{
 					// セグメントIDが0のとき基地局なのでスルー
 					if (node.lock()->getSegmentID() == 0) continue;
-					if (rail.getUID() == searchTheClosestRail(*node.lock()).getUID()) ret.push_back(node);
+					if (rail.getUID() == searchTheClosestRail(node.lock()->getPosition()).getUID()) ret.push_back(node);
 				}
 				return ret;
 			}
 			// 引数で与えられたノードがセンシング可能な範囲内にメッセージが存在する場合、メッセージをとってくる
 			// 現在はどの場合であってもメッセージを取得するようにしてある
-			Message fetchMessage(const INode& node) const {
+			Message fetchMessage(const geo::Point<double>& pos) const {
 				return m_default_message.clone();
 			}
 		};

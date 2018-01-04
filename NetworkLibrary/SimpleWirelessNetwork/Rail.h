@@ -17,6 +17,7 @@ namespace sim {
 			double distanceTo(const geo::Point<double>& dst) const {
 				return m_line.distanceTo(dst);
 			}
+			// ˆø”‚Å—^‚¦‚ç‚ê‚½À•W‚©‚çŒ©‚ÄÅ‚à‹ß‚¢üã‚ÌÀ•W‚ğ‹‚ß‚é
 			geo::Point<double> getClosestCoordinate(const geo::Point<double>& point) const {
 				return m_line.getClosestCoordinate(point);
 			}

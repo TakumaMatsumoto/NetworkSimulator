@@ -142,6 +142,7 @@
     <ClInclude Include="INode.h" />
     <ClInclude Include="Node.h" />
     <ClInclude Include="Message.h" />
+    <ClInclude Include="Obstacle.h" />
     <ClInclude Include="Rail.h" />
     <ClInclude Include="Result.h" />
     <ClInclude Include="Simulation.h" />
