@@ -36,9 +36,7 @@ namespace sim {
 				return {
 					{ "fnd_round",				ResultTypeValuePair("primitive",	sim::ResultValue(std::to_string(m_fnd_round))) },
 					{ "and_round",				ResultTypeValuePair("primitive",	sim::ResultValue(std::to_string(m_and_round))) },
-					{ "nodes_survival_rates",	ResultTypeValuePair("array",		sim::ResultValue(buf)) },
-					{ "data_collection_rate",	ResultTypeValuePair("primitive",	sim::ResultValue(std::to_string(m_data_collected_rate))) },
-					{ "area_cover_rate",		ResultTypeValuePair("primitive",	sim::ResultValue(std::to_string(m_area_cover_rate))) },
+					{ "nodes_survival_rates",	ResultTypeValuePair("array",		sim::ResultValue(buf)) }
 				};
 			}
 		};
