@@ -5,7 +5,7 @@ namespace sim {
 	namespace swn {
 		class Rail {
 		private:
-			const unsigned int m_UID;
+			unsigned int m_UID;
 			geo::StraightLine<double> m_line;
 		public:
 			Rail(const unsigned int UID, const geo::StraightLine<double>& line) 
