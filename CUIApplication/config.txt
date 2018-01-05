@@ -1,2 +1,2 @@
-debug=true
+verbose=true
 filename=result.csv

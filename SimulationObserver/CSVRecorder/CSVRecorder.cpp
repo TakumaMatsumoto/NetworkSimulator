@@ -1,4 +1,5 @@
 #include "CSVRecorder.h"
+#include <iostream>
 using namespace sim::observer;
 template <typename List>
 void split(const std::string& s, const std::string& delim, List& result)
@@ -24,6 +25,11 @@ void split(const std::string& s, const std::string& delim, List& result)
 		pos = p + delim.size();
 	}
 }
+namespace std {
+	bool stob(const std::string& str) {
+		return str == "True" || str == "true" || str == "t";
+	}
+}
 
 CSVRecorder::Config CSVRecorder::Config::createFromConfigFile() {
 	const std::string fname = "config.txt";
@@ -36,7 +42,20 @@ CSVRecorder::Config CSVRecorder::Config::createFromConfigFile() {
 		split(str, "=", map);
 		umap.insert({ map[0], map[1] });
 	}
-	return Config(umap.at("filename"));
+	return Config(umap.at("filename"), std::stob(umap.at("verbose")));
+}
+
+void CSVRecorder::onSimulationsBegin(const std::string& param_name, const sim::Parameter& param) {
+	if (m_conf.m_verbose) {
+		m_param_name = param_name;
+		std::cout << "simulations under " << param_name << " starts" << std::endl;
+	}
+}
+
+void CSVRecorder::onSimulationBegin(const unsigned int current_trial_number) {
+	if (m_conf.m_verbose && current_trial_number % 100 == 0) {
+		std::cout << m_param_name << " current trial number:" << current_trial_number << std::endl;
+	}
 }
 
 void CSVRecorder::updateTable(const sim::ResultNameTypePair& ntp, const std::string& param_name, const sim::Results& results) {
@@ -79,6 +98,10 @@ void CSVRecorder::updateTable(const sim::ResultNameTypePair& ntp, const std::str
 }
 
 void CSVRecorder::onSimulationsEnd(const std::string& param_name, const sim::Results& results) {
+	if (m_conf.m_verbose) {
+		m_param_name = param_name;
+		std::cout << "simulations under " << param_name << " ends" << std::endl;
+	}
 	const auto ntps = [&results]() {
 		std::vector<sim::ResultNameTypePair> ret;
 		for (const auto& map : results[0])

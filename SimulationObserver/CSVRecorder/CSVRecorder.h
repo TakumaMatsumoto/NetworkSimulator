@@ -5,12 +5,16 @@
 namespace sim {
 	namespace observer {
 		class CSVRecorder : public ISimulationObserver {
+			std::string m_param_name;
 		public:
 			class Config {
 			public:
-				const bool m_log = false;
+				// [required]
 				const std::string m_filename;
-				Config(const std::string& filename) : m_filename(filename) {
+				// [option]
+				const bool m_verbose = false;
+				Config(const std::string& filename, const bool verbose = false) 
+					: m_filename(filename), m_verbose(verbose) {
 				}
 				static Config createFromConfigFile();
 			};
@@ -23,14 +27,10 @@ namespace sim {
 			// ある一つのシミュレーション設定下でのシミュレーションが開始するタイミングで実行される関数
 			// @param param_name:	シミュレーション設定の名前
 			// @param param:		シミュレーション設定
-			virtual void onSimulationsBegin(const std::string& param_name, const sim::Parameter& param) override {
-
-			}
+			virtual void onSimulationsBegin(const std::string& param_name, const sim::Parameter& param) override;
 			// シミュレーションが開始する毎に実行される関数
 			// @param current_trial_number: 現在の試行回数
-			virtual void onSimulationBegin(const unsigned int current_trial_number) override {
-
-			}
+			virtual void onSimulationBegin(const unsigned int current_trial_number) override;
 			// シミュレーションが終了する毎に実行される関数
 			// @param current_trial_number: 現在の試行回数
 			// @param result: シミュレーション結果
