@@ -2,6 +2,7 @@
 #include "SimulatorLibrary\Table.h"
 #include "Result.h"
 #include "UIDCreator.h"
+
 using namespace sim::swn;
 #define NRAND() static_cast<double>(rand()) / RAND_MAX
 
@@ -20,10 +21,12 @@ Simulation::Object Simulation::createObject() {
 	// 基地局(ベースノード)を配置
 	const auto base_node = std::make_shared<BaseNode>(uid_creator.get(), geo::Point<double>(0.0, 0.0), m_conf.selectTransmissionRange(NRAND()));
 	// センサノードの配列を基地局から遠い順にする
-	const auto sort_func = [&base_node](const std::shared_ptr<SensorNode>& lhs, const std::shared_ptr<SensorNode>& rhs) {
-		return lhs->getPosition().distanceTo(base_node->getPosition()) < rhs->getPosition().distanceTo(base_node->getPosition());
-	};
-	std::sort(snodes.begin(), snodes.end(), sort_func);
+	{
+		const auto sort_func = [&base_node](const std::shared_ptr<SensorNode>& lhs, const std::shared_ptr<SensorNode>& rhs) {
+			return lhs->getPosition().distanceTo(base_node->getPosition()) < rhs->getPosition().distanceTo(base_node->getPosition());
+		};
+		std::sort(snodes.begin(), snodes.end(), sort_func);
+	}
 	SensorNodes sensor_nodes(snodes);
 
 	// マップ情報の設定
@@ -32,9 +35,17 @@ Simulation::Object Simulation::createObject() {
 	for (unsigned int i = 0, length = m_conf.selectNumberOfObstacles(NRAND()); i < length; i++)
 	{
 		const auto line = rails[rails.size() * NRAND()].getLine();
-		const auto point = line.getPointAtX(m_conf.m_area_width * std::cos(line.getAngle()));
+		const auto point = line.getPointAtX(m_conf.m_area_width * std::cos(line.getAngle()) * NRAND());
 		obstacles.push_back(Obstacle(uid_creator.get(), point));
 	}
+	{
+		// 障害物の配列を基地局から遠い順にする
+		const auto sort_func = [&base_node](const Obstacle& lhs, const Obstacle& rhs) {
+			return lhs.getPosition().distanceTo(base_node->getPosition()) < rhs.getPosition().distanceTo(base_node->getPosition());
+		};
+		std::sort(obstacles.begin(), obstacles.end(), sort_func);
+	}
+
 	const auto nodes = [&]() {
 		auto ret = sensor_nodes.getNodes();
 		ret.push_back(base_node);
@@ -69,10 +80,10 @@ sim::Result Simulation::run() {
 		obj.mp_sensor_nodes.moveToRail();
 		// 全センサノードが送信先センサノードを探す
 		obj.mp_sensor_nodes.searchReceiver();
-		// 全センサノードが送信元センサノードを探す
-		obj.mp_sensor_nodes.searchSender();
 		// ベースノードが収集元のノードを探す
 		obj.mp_base_node->searchSender();
+		// 全センサノードが送信元センサノードを探す
+		obj.mp_sensor_nodes.searchSender();
 		// 収集元のノードからメッセージを取得する(移動含)
 		const auto p_msg = obj.mp_base_node->collectMessage();
 		unsigned int size = p_msg->getSize();
