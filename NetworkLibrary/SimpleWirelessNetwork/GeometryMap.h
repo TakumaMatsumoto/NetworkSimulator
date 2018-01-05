@@ -1,5 +1,6 @@
 #pragma once
 #include <memory>
+#include <algorithm>
 #include "INode.h"
 #include "Obstacle.h"
 
@@ -36,10 +37,11 @@ namespace sim {
 			// 引数で与えられた位置からみて近い順にしてレールを取得する
 			// @param pos: 位置情報
 			std::vector<Rail> orderRailsByDistance(const geo::Point<double>& pos) const {
-				std::vector<Rail> ret = m_rails;
+				auto ret = getRails();
 				const auto sort_func = [&pos](const Rail& l, const Rail& r) {
 					return l.distanceTo(pos) < r.distanceTo(pos);
 				};
+				std::sort(ret.begin(), ret.end(), sort_func);
 				return ret;
 			}
 			std::vector<Obstacle> searchObstaclesOnRail(const Rail& rail) const {
@@ -60,14 +62,35 @@ namespace sim {
 			}
 
 			// 引数で与えられたレールと距離が近いノードのリストを取得する
+			// なお、基地局は除かれる
 			// @param rail: レール
 			std::vector<std::weak_ptr<INode>> searchNodesCloseToRail(const Rail& rail) const {
 				std::vector<std::weak_ptr<INode>> ret;
 				for (const auto& node : m_nodes)
 				{
+					const auto closest_rail = orderRailsByDistance(node.lock()->getPosition())[0];
 					// セグメントIDが0のとき基地局なのでスルー
 					if (node.lock()->getSegmentID() == 0) continue;
-					if (rail.getUID() == orderRailsByDistance(node.lock()->getPosition())[0].getUID()) ret.push_back(node);
+					if (rail.getUID() == closest_rail.getUID()) ret.push_back(node);
+				}
+				return ret;
+			}
+			std::vector<std::weak_ptr<INode>> searchNodesBetween(const Rail& rail, const std::pair<geo::Point<double>, geo::Point<double>>& p_pair) const {
+				std::vector<std::weak_ptr<INode>> ret;
+				geo::Rectangle<double> rect(p_pair.first, p_pair.second.x - p_pair.first.x, p_pair.second.y - p_pair.first.y);
+				for (const auto& node : searchNodesCloseToRail(rail))
+				{
+					if (rect.include(node.lock()->getPosition())) ret.push_back(node);
+				}
+				return ret;
+			}
+			std::vector<Obstacle> searchObstaclesBetween(const Rail& rail, const std::pair<geo::Point<double>, geo::Point<double>>& p_pair) const {
+				std::vector<Obstacle> ret;
+				geo::Rectangle<double> rect(p_pair.first, p_pair.second.x - p_pair.first.x, p_pair.second.y - p_pair.first.y);
+				for (const auto& obstacle : searchObstaclesOnRail(rail)){
+					if (rect.include(obstacle.getPosition())) {
+						ret.push_back(obstacle);
+					}
 				}
 				return ret;
 			}
