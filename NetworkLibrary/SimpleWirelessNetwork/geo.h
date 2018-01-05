@@ -98,9 +98,9 @@ namespace geo{
 		Point<T> getClosestCoordinate(const Point<T>& point) const {
 			const T
 				x_numer = m_slope * (point.y - m_y_intercept) + point.x,
-				x_denom = pow(m_slope, 2) + 1,
+				x_denom = pow(m_slope, 2.0) + 1.0,
 				y_numer = m_slope * (m_slope * (point.y - m_y_intercept) + point.x),
-				y_denom = pow(m_slope, 2) + 1,
+				y_denom = pow(m_slope, 2.0) + 1.0,
 				y_second = m_y_intercept;
 			return Point<T>(x_numer / x_denom, y_numer / y_denom + y_second);
 		}
@@ -146,8 +146,8 @@ namespace geo{
 			return bottom_left.y + height;
 		}
 		bool include(const Point<T>& point) const{
-			bool inX = (bottom_left.x <= point.x) && (point.x <= bottom_left.x + width);
-			bool inY = (bottom_left.y <= point.y) && (point.y <= bottom_left.y + height);
+			const bool inX = (bottom_left.x < point.x) && (point.x < bottom_left.x + width);
+			const bool inY = (bottom_left.y < point.y) && (point.y < bottom_left.y + height);
 			return inX && inY;
 		}
 	};

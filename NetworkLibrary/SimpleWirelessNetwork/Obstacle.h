@@ -20,7 +20,7 @@ namespace sim {
 			}
 			bool closeTo(const geo::StraightLine<double>& line) const {
 				const auto base = line.getPointAtX(m_position.x);
-				return base.distanceTo(m_position) < 1.0;
+				return base.distanceTo(m_position) < 0.01;
 			}
 		};
 	}
